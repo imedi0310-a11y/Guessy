@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data.dart';
 import 'prefs.dart';
 import 'sfx.dart';
+import 'online.dart';
 import 'strings.dart';
 import 'theme.dart';
 import 'screens/home.dart';
@@ -19,6 +20,7 @@ Future<void> bootstrap() async {
   await Prefs.init();
   await GameData.load();
   Sfx.init();
+  await Online.init();
   langNotifier.value = Lang.code;
 }
 

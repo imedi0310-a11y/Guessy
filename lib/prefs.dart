@@ -56,6 +56,9 @@ class Prefs {
   static String get cat => _getString('cat') ?? 'animals';
   static set cat(String v) => _setString('cat', v);
 
+  static String get name => _getString('name') ?? '';
+  static set name(String v) => _setString('name', v);
+
   static bool get soundOn => (_getInt('sound') ?? 1) == 1;
   static set soundOn(bool v) => _setInt('sound', v ? 1 : 0);
 

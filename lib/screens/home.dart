@@ -7,6 +7,7 @@ import '../strings.dart';
 import '../theme.dart';
 import '../ui.dart';
 import 'game_screen.dart';
+import 'online_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -100,12 +101,18 @@ class _HomeScreenState extends State<HomeScreen> {
               LuxButton(label: t('play_ai'), icon: '🤖', onPressed: _playAI),
               const SizedBox(height: 12),
               GlassButton(
+                icon: '🌐',
+                label: t('play_friend'),
+                onPressed: () => _open(OnlineLobby(catId: catId)),
+              ),
+              const SizedBox(height: 12),
+              GlassButton(
                 icon: '⭐',
                 label: dailyDone == null ? t('daily') : '${t('daily')} · ${t('daily_done_today')}',
                 onPressed: dailyDone == null ? _playDaily : null,
               ),
               const SizedBox(height: 26),
-              Text(t('coming'), textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 13, height: 1.5)),
+              Text(t('coming2'), textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 13, height: 1.5)),
             ],
           ),
         ),

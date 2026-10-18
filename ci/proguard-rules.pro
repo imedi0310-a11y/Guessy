@@ -5,3 +5,6 @@
 -keepclassmembers class * { @androidx.annotation.Keep *; }
 -dontwarn io.flutter.embedding.**
 -keep class xyz.luan.audioplayers.** { *; }
+-keep class io.flutter.plugins.firebase.** { *; }
+-keep class com.google.firebase.** { *; }
+-dontwarn com.google.firebase.**
