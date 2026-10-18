@@ -8,16 +8,27 @@ import 'screens/home.dart';
 
 final langNotifier = ValueNotifier<String>('ar');
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await Prefs.init();
-  await GameData.load();
-  langNotifier.value = Lang.code;
   runApp(const GuessyApp());
 }
 
-class GuessyApp extends StatelessWidget {
+/// Loads prefs + card data, showing a splash (or the error) instead of a blank screen.
+Future<void> bootstrap() async {
+  await Prefs.init();
+  await GameData.load();
+  langNotifier.value = Lang.code;
+}
+
+class GuessyApp extends StatefulWidget {
   const GuessyApp({super.key});
+
+  @override
+  State<GuessyApp> createState() => _GuessyAppState();
+}
+
+class _GuessyAppState extends State<GuessyApp> {
+  late final Future<void> _boot = bootstrap();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +42,33 @@ class GuessyApp extends StatelessWidget {
         locale: Locale(code),
         supportedLocales: [for (final l in langs) Locale(l)],
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        home: const HomeScreen(),
+        home: FutureBuilder<void>(
+          future: _boot,
+          builder: (context, snap) {
+            if (snap.hasError) {
+              return Scaffold(
+                body: SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: SingleChildScrollView(
+                      child: SelectableText('Guessy error:\n${snap.error}\n\n${snap.stackTrace}',
+                          style: const TextStyle(color: Colors.white)),
+                    ),
+                  ),
+                ),
+              );
+            }
+            if (snap.connectionState != ConnectionState.done) {
+              return const Scaffold(
+                body: Center(
+                  child: Text('Guessy 🤔',
+                      style: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: C.yellow)),
+                ),
+              );
+            }
+            return const HomeScreen();
+          },
+        ),
       ),
     );
   }
