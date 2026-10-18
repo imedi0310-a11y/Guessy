@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -13,6 +14,15 @@ const _dbUrl = 'https://guessy-39af7-default-rtdb.europe-west1.firebasedatabase.
 class Online {
   static bool available = false;
   static String? error;
+  static Future<void>? ready;
+
+  static void start() {
+    var test = false;
+    try {
+      test = Platform.environment.containsKey('FLUTTER_TEST');
+    } catch (_) {}
+    ready = test ? Future.value() : init();
+  }
 
   static Future<void> init() async {
     try {

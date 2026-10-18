@@ -25,6 +25,14 @@ class _OnlineLobbyState extends State<OnlineLobby> {
   bool _busy = false;
   String? _err;
 
+  @override
+  void initState() {
+    super.initState();
+    Online.ready?.then((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
   String get _myName => _name.text.trim().isEmpty ? t('you') : _name.text.trim();
 
   Future<void> _go(Future<(String, String)> Function() action) async {

@@ -20,7 +20,7 @@ Future<void> bootstrap() async {
   await Prefs.init();
   await GameData.load();
   Sfx.init();
-  await Online.init();
+  Online.start(); // connects in the background
   langNotifier.value = Lang.code;
 }
 
