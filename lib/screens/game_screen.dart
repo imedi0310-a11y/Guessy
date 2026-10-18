@@ -183,7 +183,7 @@ class _GameScreenState extends State<GameScreen> {
               gradient: C.goldGrad,
               glow: C.gold,
               title: t('you'),
-              center: const GradientText('?', style: TextStyle(fontSize: 54, fontWeight: FontWeight.w900, height: 1.1)),
+              center: const GradientText('?', style: TextStyle(fontSize: 46, fontWeight: FontWeight.w900, height: 1.05)),
               name: null,
               sub: t('on_head'),
               nameColor: C.goldLight,
@@ -207,7 +207,7 @@ class _GameScreenState extends State<GameScreen> {
                     gradient: C.roseGrad,
                     glow: C.pink,
                     title: t('ai_name'),
-                    center: Text(opp!.emoji, style: const TextStyle(fontSize: 42, height: 1.2)),
+                    center: Text(opp!.emoji, style: const TextStyle(fontSize: 36, height: 1.15)),
                     name: opp.name,
                     sub: t('you_see'),
                     nameColor: const Color(0xFFFF9DBE),
@@ -228,7 +228,7 @@ class _GameScreenState extends State<GameScreen> {
     required Color nameColor,
   }) {
     return SizedBox(
-      height: 150,
+      height: 132,
       child: GradientFrame(
         gradient: gradient,
         glow: glow,
@@ -279,7 +279,9 @@ class _GameScreenState extends State<GameScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          Flexible(
+          Expanded(
+            child: Align(
+            alignment: AlignmentDirectional.centerStart,
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
               decoration: BoxDecoration(
@@ -300,12 +302,17 @@ class _GameScreenState extends State<GameScreen> {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Flexible(child: Text(s, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14))),
+                  Flexible(
+                      child: Text(s,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14))),
                 ],
               ),
             ),
+            ),
           ),
-          const Spacer(),
+          const SizedBox(width: 10),
           Text('${g.possible.length}', style: const TextStyle(color: C.gold, fontWeight: FontWeight.w900, fontSize: 15)),
           const SizedBox(width: 4),
           Text(t('cards_left'), style: const TextStyle(color: C.muted, fontSize: 12)),
@@ -318,13 +325,13 @@ class _GameScreenState extends State<GameScreen> {
   Widget _logView() {
     if (g.log.isEmpty) {
       return Center(
-        child: Padding(
-          padding: const EdgeInsets.all(28),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('💬', style: TextStyle(fontSize: 30)),
-              const SizedBox(height: 10),
+              const Text('💬', style: TextStyle(fontSize: 26)),
+              const SizedBox(height: 8),
               Text(widget.daily ? t('daily_intro') : t('start_hint'),
                   textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 15, height: 1.6)),
             ],
@@ -434,10 +441,11 @@ class _GameScreenState extends State<GameScreen> {
       children: [
         if (!widget.daily) ...[
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               _life('💡', t('hint'), g.lifeHint, g.useHint),
+              const SizedBox(width: 8),
               _life('✂️', t('half'), g.lifeHalf, g.useHalf),
+              const SizedBox(width: 8),
               _life('⏭️', t('skip'), g.lifeSkip && !g.skipNext, g.useSkip),
             ],
           ),
@@ -461,7 +469,7 @@ class _GameScreenState extends State<GameScreen> {
         const SizedBox(height: 10),
         if (qs.isNotEmpty)
           SizedBox(
-            height: 132,
+            height: 122,
             child: ShaderMask(
               blendMode: BlendMode.dstIn,
               shaderCallback: (r) => const LinearGradient(
@@ -474,8 +482,8 @@ class _GameScreenState extends State<GameScreen> {
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
-                  mainAxisExtent: 172,
+                  crossAxisSpacing: 8,
+                  mainAxisExtent: 168,
                 ),
                 itemCount: qs.length,
                 itemBuilder: (_, i) => QuestionTile(text: qs[i].text, onTap: () => g.ask(qs[i])),
@@ -487,7 +495,7 @@ class _GameScreenState extends State<GameScreen> {
           label: '🎯 ${t('guess')}',
           gradient: C.roseGrad,
           textColor: Colors.white,
-          height: 54,
+          height: 50,
           onPressed: _openDeck,
         ),
       ],
@@ -495,30 +503,31 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   Widget _life(String icon, String label, bool enabled, VoidCallback onTap) {
-    return Opacity(
-      opacity: enabled ? 1 : 0.35,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: enabled ? onTap : null,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-          child: Column(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: C.glass,
-                  border: Border.all(color: enabled ? C.gold.withValues(alpha: 0.55) : C.glassBorder),
-                  boxShadow: enabled ? [BoxShadow(color: C.gold.withValues(alpha: 0.18), blurRadius: 12)] : null,
-                ),
-                alignment: Alignment.center,
-                child: Text(icon, style: const TextStyle(fontSize: 20)),
+    return Expanded(
+      child: Opacity(
+        opacity: enabled ? 1 : 0.35,
+        child: Material(
+          color: C.glass,
+          shape: StadiumBorder(side: BorderSide(color: enabled ? C.gold.withValues(alpha: 0.5) : C.glassBorder)),
+          child: InkWell(
+            customBorder: const StadiumBorder(),
+            onTap: enabled ? onTap : null,
+            child: SizedBox(
+              height: 36,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(icon, style: const TextStyle(fontSize: 15)),
+                  const SizedBox(width: 5),
+                  Flexible(
+                    child: Text(label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w700, color: C.goldLight)),
+                  ),
+                ],
               ),
-              const SizedBox(height: 4),
-              Text(label, style: const TextStyle(fontSize: 11.5, color: C.muted, fontWeight: FontWeight.w600)),
-            ],
+            ),
           ),
         ),
       ),
