@@ -140,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
       children: [
         Container(width: 4, height: 18, decoration: BoxDecoration(gradient: C.goldGrad, borderRadius: BorderRadius.circular(4))),
         const SizedBox(width: 10),
-        Text(s, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+        Expanded(child: Text(s, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800))),
       ],
     );
   }

@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:guessy/main.dart';
@@ -11,6 +13,12 @@ void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
   testWidgets('home loads, all languages render, game screen plays', (tester) async {
+    final loader = FontLoader('Tajawal');
+    for (final w in ['Regular', 'Medium', 'Bold', 'ExtraBold', 'Black']) {
+      final f = File('assets/fonts/Tajawal-$w.ttf');
+      if (f.existsSync()) loader.addFont(Future.value(ByteData.view(f.readAsBytesSync().buffer)));
+    }
+    await loader.load();
     tester.view.physicalSize = const Size(1080, 3000);
     tester.view.devicePixelRatio = 2.5;
     addTearDown(tester.view.reset);

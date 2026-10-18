@@ -168,7 +168,12 @@ class LuxButton extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (icon != null) ...[Text(icon!, style: const TextStyle(fontSize: 20)), const SizedBox(width: 10)],
-                  Text(label, style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.w800)),
+                  Flexible(
+                    child: Text(label,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(color: textColor, fontSize: 18, fontWeight: FontWeight.w800)),
+                  ),
                 ],
               ),
             ),
