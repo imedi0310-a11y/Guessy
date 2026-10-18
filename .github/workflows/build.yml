@@ -31,6 +31,10 @@ jobs:
           sed -i 's/android:label="guessy"/android:label="Guessy"/' android/app/src/main/AndroidManifest.xml
           sed -i 's#</application>#    <meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="false" />\n    </application>#' android/app/src/main/AndroidManifest.xml
           grep -n 'Impeller\|label' android/app/src/main/AndroidManifest.xml
+          cp ci/proguard-rules.pro android/app/proguard-rules.pro
+          G=$(ls android/app/build.gradle*); echo $G
+          sed -i 's/signingConfig = signingConfigs.getByName("debug")/signingConfig = signingConfigs.getByName("debug")\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")/' $G
+          grep -n -A3 'release {' $G
 
       - name: Get packages
         run: flutter pub get
