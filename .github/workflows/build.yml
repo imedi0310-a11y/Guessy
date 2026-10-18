@@ -43,7 +43,9 @@ jobs:
           if grep -q '^ERROR' analyze.txt; then exit 1; fi
 
       - name: Run tests
-        run: flutter test
+        run: |
+          set -o pipefail
+          flutter test --reporter expanded 2>&1 | tee test.txt || { grep -v '^\s*$' test.txt | tail -c 7000 | python3 -c "import sys;d=sys.stdin.read().replace('%','%25').replace('\r','').replace('\n','%0A');print('::error title=tests::'+d)"; exit 1; }
 
       - name: Build APK
         run: |
