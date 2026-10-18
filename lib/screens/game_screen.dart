@@ -4,6 +4,7 @@ import '../game.dart';
 import '../prefs.dart';
 import '../strings.dart';
 import '../theme.dart';
+import '../ui.dart';
 
 class GameScreen extends StatefulWidget {
   final Cat cat;
@@ -54,7 +55,7 @@ class _GameScreenState extends State<GameScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (_scroll.hasClients) {
           _scroll.animateTo(_scroll.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 250), curve: Curves.easeOut);
+              duration: const Duration(milliseconds: 300), curve: Curves.easeOutCubic);
         }
       });
     }
@@ -77,10 +78,13 @@ class _GameScreenState extends State<GameScreen> {
     final r = await showDialog<bool>(
       context: context,
       builder: (c) => AlertDialog(
-        title: Text(t('leave_q')),
+        title: Text(t('leave_q'), style: const TextStyle(fontWeight: FontWeight.w800)),
         actions: [
           TextButton(onPressed: () => Navigator.pop(c, false), child: Text(t('stay'))),
-          TextButton(onPressed: () => Navigator.pop(c, true), child: Text(t('leave'))),
+          TextButton(
+            onPressed: () => Navigator.pop(c, true),
+            child: Text(t('leave'), style: const TextStyle(color: C.pink)),
+          ),
         ],
       ),
     );
@@ -97,76 +101,116 @@ class _GameScreenState extends State<GameScreen> {
         if (await _confirmLeave()) nav.pop();
       },
       child: Scaffold(
-        appBar: AppBar(
-          backgroundColor: C.bg,
-          title: Text('${widget.cat.icon} ${widget.daily ? t('daily') : widget.cat.label}'),
-          actions: [
-            if (!widget.daily) _timerChip(),
-            const SizedBox(width: 12),
-          ],
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              _cardsRow(),
-              _statusLine(),
-              Expanded(child: _logView()),
-              _bottomPanel(),
-            ],
+        body: LuxBackground(
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              children: [
+                _header(),
+                _cardsRow(),
+                _statusLine(),
+                Expanded(child: _logView()),
+                _bottomPanel(),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _timerChip() {
+  // ---------------- header ----------------
+  Widget _header() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(14, 8, 14, 6),
+      child: Row(
+        children: [
+          GlassIconButton(icon: Icons.arrow_back_rounded, onPressed: () => Navigator.maybePop(context)),
+          Expanded(
+            child: Column(
+              children: [
+                Text(widget.daily ? t('daily') : widget.cat.label,
+                    style: const TextStyle(fontSize: 19, fontWeight: FontWeight.w800)),
+                Text(widget.daily ? widget.cat.label : t(widget.diff),
+                    style: const TextStyle(fontSize: 12, color: C.muted)),
+              ],
+            ),
+          ),
+          if (!widget.daily) _timerRing() else const SizedBox(width: 44),
+        ],
+      ),
+    );
+  }
+
+  Widget _timerRing() {
     final active = g.turn == Who.me && g.pending == null && g.over == null;
     final low = g.secsLeft <= 10;
+    final color = low ? C.pink : C.gold;
     return AnimatedOpacity(
       duration: const Duration(milliseconds: 200),
       opacity: active ? 1 : 0.35,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        decoration: BoxDecoration(
-          color: low && active ? C.pink : C.surface2,
-          borderRadius: BorderRadius.circular(20),
+      child: SizedBox(
+        width: 46,
+        height: 46,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            SizedBox.expand(
+              child: CircularProgressIndicator(
+                value: g.secsLeft / GameController.turnSecs,
+                strokeWidth: 3.5,
+                backgroundColor: C.glassBorder,
+                color: color,
+                strokeCap: StrokeCap.round,
+              ),
+            ),
+            Text('${g.secsLeft}', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 15, color: color)),
+          ],
         ),
-        child: Text('⏱ ${g.secsLeft}', style: const TextStyle(fontWeight: FontWeight.w700)),
       ),
     );
   }
 
+  // ---------------- cards ----------------
   Widget _cardsRow() {
     final opp = g.oppCard;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+      padding: const EdgeInsets.fromLTRB(16, 6, 16, 10),
       child: Row(
         children: [
           Expanded(
-            child: _cardBox(
+            child: _playCard(
+              gradient: C.goldGrad,
+              glow: C.gold,
               title: t('you'),
+              center: const GradientText('?', style: TextStyle(fontSize: 54, fontWeight: FontWeight.w900, height: 1.1)),
+              name: null,
               sub: t('on_head'),
-              emoji: '❓',
-              name: '???',
-              color: C.yellow,
+              nameColor: C.goldLight,
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: 14),
           Expanded(
             child: widget.daily
-                ? _cardBox(
+                ? _playCard(
+                    gradient: C.roseGrad,
+                    glow: C.pink,
                     title: t('cards_left'),
+                    center: GradientText('${g.possible.length}',
+                        gradient: C.roseGrad,
+                        style: const TextStyle(fontSize: 46, fontWeight: FontWeight.w900, height: 1.2)),
+                    name: null,
                     sub: widget.cat.label,
-                    emoji: '⭐',
-                    name: '${g.possible.length}',
-                    color: C.pink,
+                    nameColor: C.pink,
                   )
-                : _cardBox(
+                : _playCard(
+                    gradient: C.roseGrad,
+                    glow: C.pink,
                     title: t('ai_name'),
-                    sub: t('you_see'),
-                    emoji: opp!.emoji,
+                    center: Text(opp!.emoji, style: const TextStyle(fontSize: 42, height: 1.2)),
                     name: opp.name,
-                    color: C.pink,
+                    sub: t('you_see'),
+                    nameColor: const Color(0xFFFF9DBE),
                   ),
           ),
         ],
@@ -174,64 +218,123 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _cardBox({required String title, required String sub, required String emoji, required String name, required Color color}) {
-    return Container(
-      padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(
-        color: C.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: color.withValues(alpha: 0.6), width: 1.5),
-      ),
-      child: Column(
-        children: [
-          Text(title, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 12, color: C.muted)),
-          const SizedBox(height: 4),
-          Text(emoji, style: const TextStyle(fontSize: 38)),
-          Text(name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: color)),
-          Text(sub, style: const TextStyle(fontSize: 11, color: C.muted)),
-        ],
+  Widget _playCard({
+    required Gradient gradient,
+    required Color glow,
+    required String title,
+    required Widget center,
+    required String? name,
+    required String sub,
+    required Color nameColor,
+  }) {
+    return SizedBox(
+      height: 150,
+      child: GradientFrame(
+        gradient: gradient,
+        glow: glow,
+        radius: 22,
+        fill: const Color(0xFF191433),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 12, color: C.muted, fontWeight: FontWeight.w600)),
+            center,
+            if (name != null)
+              Text(name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: nameColor)),
+            Text(sub,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(fontSize: 11, color: C.muted)),
+          ],
+        ),
       ),
     );
   }
 
+  // ---------------- status ----------------
   Widget _statusLine() {
     String s;
+    Color dot;
     if (g.over != null) {
       s = g.over!.win ? t('you_won') : t('you_lost');
+      dot = g.over!.win ? C.green : C.pink;
     } else if (g.pending != null) {
       s = t('answer_opp');
+      dot = C.pink;
     } else if (g.turn == Who.opp) {
       s = t('ai_thinking');
+      dot = C.violet;
     } else {
       s = widget.daily ? '${t('moves')}: ${g.myMoves}' : t('your_turn');
+      dot = C.gold;
     }
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Row(
         children: [
-          Expanded(child: Text(s, style: const TextStyle(fontWeight: FontWeight.w700))),
-          Text('${g.possible.length} ${t('cards_left')}', style: const TextStyle(color: C.muted, fontSize: 12)),
+          Flexible(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+              decoration: BoxDecoration(
+                color: C.glass,
+                borderRadius: BorderRadius.circular(30),
+                border: Border.all(color: dot.withValues(alpha: 0.45)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: dot,
+                      shape: BoxShape.circle,
+                      boxShadow: [BoxShadow(color: dot, blurRadius: 8)],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Flexible(child: Text(s, style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 14))),
+                ],
+              ),
+            ),
+          ),
+          const Spacer(),
+          Text('${g.possible.length}', style: const TextStyle(color: C.gold, fontWeight: FontWeight.w900, fontSize: 15)),
+          const SizedBox(width: 4),
+          Text(t('cards_left'), style: const TextStyle(color: C.muted, fontSize: 12)),
         ],
       ),
     );
   }
 
+  // ---------------- log ----------------
   Widget _logView() {
     if (g.log.isEmpty) {
       return Center(
         child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(widget.daily ? t('daily_intro') : t('start_hint'),
-              textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 15)),
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('💬', style: TextStyle(fontSize: 30)),
+              const SizedBox(height: 10),
+              Text(widget.daily ? t('daily_intro') : t('start_hint'),
+                  textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 15, height: 1.6)),
+            ],
+          ),
         ),
       );
     }
     return ListView.builder(
       controller: _scroll,
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+      padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
       itemCount: g.log.length,
       itemBuilder: (_, i) => _bubble(g.log[i]),
     );
@@ -240,36 +343,43 @@ class _GameScreenState extends State<GameScreen> {
   Widget _bubble(LogEntry e) {
     final mine = e.who == Who.me;
     String badge = '';
-    Color badgeColor = C.muted;
+    Gradient? badgeGrad;
     if (e.kind == Kind.q && e.ans != null) {
       badge = e.ans == 'yes' ? t('yes') : t('no');
-      badgeColor = e.ans == 'yes' ? C.green : C.pink;
+      badgeGrad = e.ans == 'yes' ? C.greenGrad : C.roseGrad;
     } else if (e.kind == Kind.g && e.ok != null) {
       badge = e.ok! ? '✓' : '✗';
-      badgeColor = e.ok! ? C.green : C.pink;
+      badgeGrad = e.ok! ? C.greenGrad : C.roseGrad;
     }
+    final r = BorderRadiusDirectional.only(
+      topStart: const Radius.circular(18),
+      topEnd: const Radius.circular(18),
+      bottomStart: Radius.circular(mine ? 4 : 18),
+      bottomEnd: Radius.circular(mine ? 18 : 4),
+    );
     return Align(
       alignment: mine ? AlignmentDirectional.centerStart : AlignmentDirectional.centerEnd,
       child: Container(
-        margin: const EdgeInsets.symmetric(vertical: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.8),
+        margin: const EdgeInsets.symmetric(vertical: 5),
+        padding: const EdgeInsets.fromLTRB(12, 9, 12, 9),
+        constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.82),
         decoration: BoxDecoration(
-          color: mine ? C.surface2 : C.pink.withValues(alpha: 0.18),
-          borderRadius: BorderRadius.circular(14),
+          color: mine ? C.glass : C.pink.withValues(alpha: 0.12),
+          borderRadius: r,
+          border: Border.all(color: mine ? C.gold.withValues(alpha: 0.28) : C.pink.withValues(alpha: 0.35)),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(mine ? (e.note == 'hint' ? '💡' : '🙋') : '🤖'),
-            const SizedBox(width: 6),
-            Flexible(child: Text(e.text)),
+            Text(mine ? (e.note == 'hint' ? '💡' : '🙋') : '🤖', style: const TextStyle(fontSize: 16)),
+            const SizedBox(width: 8),
+            Flexible(child: Text(e.text, style: const TextStyle(fontSize: 14.5, height: 1.35))),
             if (badge.isNotEmpty) ...[
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                decoration: BoxDecoration(color: badgeColor, borderRadius: BorderRadius.circular(10)),
-                child: Text(badge, style: const TextStyle(color: C.bg, fontWeight: FontWeight.w800)),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                decoration: BoxDecoration(gradient: badgeGrad, borderRadius: BorderRadius.circular(10)),
+                child: Text(badge, style: const TextStyle(color: C.ink, fontWeight: FontWeight.w900, fontSize: 13)),
               ),
             ],
           ],
@@ -278,87 +388,139 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  // ---------------- bottom panel ----------------
   Widget _bottomPanel() {
     Widget child;
     if (g.over != null) {
-      child = const SizedBox.shrink();
+      child = const SizedBox(height: 8);
     } else if (g.pending != null) {
       child = _pendingPanel(g.pending!);
     } else if (g.turn == Who.opp) {
-      child = Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
-          const SizedBox(width: 10),
-          Text(t('ai_thinking')),
-        ],
+      child = Padding(
+        padding: const EdgeInsets.symmetric(vertical: 18),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: C.violet)),
+            const SizedBox(width: 12),
+            Text(t('ai_thinking'), style: const TextStyle(color: C.muted, fontWeight: FontWeight.w600)),
+          ],
+        ),
       );
     } else {
-      child = Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (!widget.daily)
-            Row(
-              children: [
-                _life('💡', t('hint'), g.lifeHint, g.useHint),
-                const SizedBox(width: 8),
-                _life('✂️', t('half'), g.lifeHalf, g.useHalf),
-                const SizedBox(width: 8),
-                _life('⏭️', t('skip'), g.lifeSkip && !g.skipNext, g.useSkip),
-              ],
-            ),
-          if (!widget.daily) const SizedBox(height: 10),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text('❓ ${g.unasked.isEmpty ? t('no_q_left') : t('pick_q')}',
-                style: const TextStyle(color: C.muted, fontSize: 13, fontWeight: FontWeight.w600)),
-          ),
-          const SizedBox(height: 6),
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.26),
-            child: SingleChildScrollView(
-              child: Wrap(
-                spacing: 6,
-                runSpacing: 6,
-                children: [
-                  for (final q in g.unasked)
-                    ActionChip(
-                      label: Text(q.text, style: const TextStyle(fontSize: 13.5)),
-                      backgroundColor: C.surface2,
-                      side: BorderSide(color: C.yellow.withValues(alpha: 0.45)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                      onPressed: () => g.ask(q),
-                    ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: C.pink, foregroundColor: Colors.white),
-            onPressed: _openDeck,
-            child: Text('🎯 ${t('guess')}'),
-          ),
-        ],
-      );
+      child = _myTurnPanel();
     }
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      decoration: const BoxDecoration(
-        color: C.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(22)),
+      padding: EdgeInsets.fromLTRB(16, 14, 16, 14 + MediaQuery.of(context).padding.bottom),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF1C1640), Color(0xFF120F26)],
+        ),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+        border: Border(top: BorderSide(color: C.gold.withValues(alpha: 0.30))),
+        boxShadow: const [BoxShadow(color: Colors.black54, blurRadius: 24, offset: Offset(0, -6))],
       ),
-      child: child,
+      child: AnimatedSize(duration: const Duration(milliseconds: 220), curve: Curves.easeOut, child: child),
+    );
+  }
+
+  Widget _myTurnPanel() {
+    final qs = g.unasked;
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (!widget.daily) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _life('💡', t('hint'), g.lifeHint, g.useHint),
+              _life('✂️', t('half'), g.lifeHalf, g.useHalf),
+              _life('⏭️', t('skip'), g.lifeSkip && !g.skipNext, g.useSkip),
+            ],
+          ),
+          const SizedBox(height: 12),
+        ],
+        Row(
+          children: [
+            Container(width: 3, height: 16, decoration: BoxDecoration(gradient: C.goldGrad, borderRadius: BorderRadius.circular(3))),
+            const SizedBox(width: 8),
+            Text(qs.isEmpty ? t('no_q_left') : t('pick_q'),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+            const Spacer(),
+            if (qs.isNotEmpty)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 2),
+                decoration: BoxDecoration(color: C.gold.withValues(alpha: 0.14), borderRadius: BorderRadius.circular(10)),
+                child: Text('${qs.length}', style: const TextStyle(color: C.gold, fontWeight: FontWeight.w800, fontSize: 12)),
+              ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        if (qs.isNotEmpty)
+          SizedBox(
+            height: 132,
+            child: ShaderMask(
+              blendMode: BlendMode.dstIn,
+              shaderCallback: (r) => const LinearGradient(
+                colors: [Colors.transparent, Colors.white, Colors.white, Colors.transparent],
+                stops: [0, 0.04, 0.94, 1],
+              ).createShader(r),
+              child: GridView.builder(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  mainAxisExtent: 172,
+                ),
+                itemCount: qs.length,
+                itemBuilder: (_, i) => QuestionTile(text: qs[i].text, onTap: () => g.ask(qs[i])),
+              ),
+            ),
+          ),
+        const SizedBox(height: 12),
+        LuxButton(
+          label: '🎯 ${t('guess')}',
+          gradient: C.roseGrad,
+          textColor: Colors.white,
+          height: 54,
+          onPressed: _openDeck,
+        ),
+      ],
     );
   }
 
   Widget _life(String icon, String label, bool enabled, VoidCallback onTap) {
-    return Expanded(
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(minimumSize: const Size.fromHeight(40), padding: EdgeInsets.zero),
-        onPressed: enabled ? onTap : null,
-        child: Text('$icon $label', style: const TextStyle(fontSize: 13)),
+    return Opacity(
+      opacity: enabled ? 1 : 0.35,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: enabled ? onTap : null,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          child: Column(
+            children: [
+              Container(
+                width: 46,
+                height: 46,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: C.glass,
+                  border: Border.all(color: enabled ? C.gold.withValues(alpha: 0.55) : C.glassBorder),
+                  boxShadow: enabled ? [BoxShadow(color: C.gold.withValues(alpha: 0.18), blurRadius: 12)] : null,
+                ),
+                alignment: Alignment.center,
+                child: Text(icon, style: const TextStyle(fontSize: 20)),
+              ),
+              const SizedBox(height: 4),
+              Text(label, style: const TextStyle(fontSize: 11.5, color: C.muted, fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -369,28 +531,51 @@ class _GameScreenState extends State<GameScreen> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(isGuess ? t('opp_guess') : t('opp_asks'), style: const TextStyle(color: C.muted, fontSize: 13)),
-        const SizedBox(height: 6),
-        Text(p.text, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
-        const SizedBox(height: 6),
-        Text('${t('card_says')}${p.suggestYes ? t('yes') : t('no')}',
-            style: const TextStyle(color: C.yellow, fontSize: 13)),
-        const SizedBox(height: 12),
+        Row(
+          children: [
+            const Text('🤖', style: TextStyle(fontSize: 18)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(isGuess ? t('opp_guess') : t('opp_asks'),
+                  style: const TextStyle(color: C.muted, fontSize: 13)),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Text(p.text, textAlign: TextAlign.center, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, height: 1.3)),
+        const SizedBox(height: 10),
+        Center(
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+            decoration: BoxDecoration(
+              color: C.gold.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: C.gold.withValues(alpha: 0.35)),
+            ),
+            child: Text('${t('card_says')}${p.suggestYes ? t('yes') : t('no')}',
+                style: const TextStyle(color: C.goldLight, fontSize: 13, fontWeight: FontWeight.w600)),
+          ),
+        ),
+        const SizedBox(height: 14),
         Row(
           children: [
             Expanded(
-              child: FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: C.green, foregroundColor: C.bg),
+              child: LuxButton(
+                label: '✓ ${t('yes')}',
+                gradient: C.greenGrad,
+                textColor: C.ink,
+                height: 54,
                 onPressed: () => g.answer(true),
-                child: Text('✓ ${t('yes')}'),
               ),
             ),
-            const SizedBox(width: 10),
+            const SizedBox(width: 12),
             Expanded(
-              child: FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: C.pink, foregroundColor: Colors.white),
+              child: LuxButton(
+                label: '✗ ${t('no')}',
+                gradient: C.roseGrad,
+                textColor: Colors.white,
+                height: 54,
                 onPressed: () => g.answer(false),
-                child: Text('✗ ${t('no')}'),
               ),
             ),
           ],
@@ -399,71 +584,30 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  void _openQuestions() {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: C.surface,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (c) {
-        final qs = g.unasked;
-        return SafeArea(
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: MediaQuery.of(c).size.height * 0.7),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(t('pick_q'), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 8),
-                Flexible(
-                  child: qs.isEmpty
-                      ? Padding(padding: const EdgeInsets.all(24), child: Text(t('no_q_left')))
-                      : ListView.separated(
-                          shrinkWrap: true,
-                          itemCount: qs.length,
-                          separatorBuilder: (_, __) => const Divider(height: 1),
-                          itemBuilder: (_, i) => ListTile(
-                            title: Text(qs[i].text),
-                            trailing: const Icon(Icons.chevron_right),
-                            onTap: () {
-                              Navigator.pop(c);
-                              g.ask(qs[i]);
-                            },
-                          ),
-                        ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
-
+  // ---------------- deck ----------------
   void _openDeck() {
     showModalBottomSheet(
       context: context,
-      backgroundColor: C.surface,
       isScrollControlled: true,
-      showDragHandle: true,
       builder: (c) {
         final cards = widget.cat.cards;
         return SafeArea(
           child: SizedBox(
-            height: MediaQuery.of(c).size.height * 0.75,
+            height: MediaQuery.of(c).size.height * 0.78,
             child: Column(
               children: [
-                Text(t('tap_to_guess'), style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                Text('${g.possible.length} ${t('cards_left')}', style: const TextStyle(color: C.muted, fontSize: 12)),
+                Text(t('tap_to_guess'), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                const SizedBox(height: 2),
+                Text('${g.possible.length} ${t('cards_left')}', style: const TextStyle(color: C.gold, fontSize: 13)),
                 const SizedBox(height: 8),
                 Expanded(
                   child: GridView.builder(
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.fromLTRB(14, 6, 14, 14),
                     gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 4,
-                      mainAxisSpacing: 8,
-                      crossAxisSpacing: 8,
-                      childAspectRatio: 0.8,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                      childAspectRatio: 0.78,
                     ),
                     itemCount: cards.length,
                     itemBuilder: (_, i) {
@@ -471,24 +615,34 @@ class _GameScreenState extends State<GameScreen> {
                       final ok = g.consistent(d);
                       final gone = g.myWrong.contains(d.id) || g.removed.contains(d.id);
                       return Opacity(
-                        opacity: ok ? 1 : 0.28,
-                        child: InkWell(
-                          borderRadius: BorderRadius.circular(14),
-                          onTap: gone ? null : () => _confirmGuess(c, d),
-                          child: Container(
-                            decoration: BoxDecoration(color: C.surface2, borderRadius: BorderRadius.circular(14)),
-                            padding: const EdgeInsets.all(4),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(d.emoji, style: const TextStyle(fontSize: 26)),
-                                const SizedBox(height: 2),
-                                Text(d.name,
-                                    textAlign: TextAlign.center,
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(fontSize: 11)),
-                              ],
+                        opacity: ok ? 1 : 0.25,
+                        child: Material(
+                          color: ok ? C.surface2 : C.glass,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            side: BorderSide(color: ok ? C.gold.withValues(alpha: 0.35) : C.glassBorder),
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(16),
+                            onTap: gone ? null : () => _confirmGuess(c, d),
+                            child: Padding(
+                              padding: const EdgeInsets.all(4),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(d.emoji, style: const TextStyle(fontSize: 28)),
+                                  const SizedBox(height: 4),
+                                  Text(d.name,
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        fontWeight: FontWeight.w600,
+                                        decoration: gone ? TextDecoration.lineThrough : null,
+                                      )),
+                                ],
+                              ),
                             ),
                           ),
                         ),
@@ -508,20 +662,21 @@ class _GameScreenState extends State<GameScreen> {
     final yes = await showDialog<bool>(
       context: sheetCtx,
       builder: (c) => AlertDialog(
-        title: Text(t('confirm_guess')),
+        title: Text(t('confirm_guess'), textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w800)),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(d.emoji, style: const TextStyle(fontSize: 48)),
-            Text(d.name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+            Text(d.emoji, style: const TextStyle(fontSize: 56)),
+            const SizedBox(height: 6),
+            GradientText(d.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
           ],
         ),
+        actionsAlignment: MainAxisAlignment.center,
         actions: [
           TextButton(onPressed: () => Navigator.pop(c, false), child: Text(t('cancel'))),
-          FilledButton(
-            style: FilledButton.styleFrom(minimumSize: const Size(100, 44)),
-            onPressed: () => Navigator.pop(c, true),
-            child: Text(t('guess')),
+          SizedBox(
+            width: 130,
+            child: LuxButton(label: t('guess'), height: 46, onPressed: () => Navigator.pop(c, true)),
           ),
         ],
       ),
@@ -532,6 +687,7 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  // ---------------- result ----------------
   void _showResult() {
     if (!mounted) return;
     final r = g.over!;
@@ -539,30 +695,42 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       isDismissible: false,
       enableDrag: false,
-      backgroundColor: C.surface,
+      showDragHandle: false,
       builder: (c) => SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+          padding: const EdgeInsets.fromLTRB(20, 28, 20, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(widget.daily ? t('daily_solved') : (r.win ? t('you_won') : t('you_lost')),
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900, color: r.win ? C.yellow : C.pink)),
-              const SizedBox(height: 14),
+              Text(r.win ? '🏆' : '🤖', style: const TextStyle(fontSize: 44)),
+              const SizedBox(height: 6),
+              GradientText(
+                widget.daily ? t('daily_solved') : (r.win ? t('you_won') : t('you_lost')),
+                align: TextAlign.center,
+                gradient: r.win ? C.goldGrad : C.roseGrad,
+                style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900),
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Expanded(child: _reveal(t('your_card_was'), g.myCard, C.goldGrad)),
+                  if (g.oppCard != null) ...[const SizedBox(width: 12), Expanded(child: _reveal(t('their_card_was'), g.oppCard!, C.roseGrad))],
+                ],
+              ),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _reveal(t('your_card_was'), g.myCard),
-                  if (g.oppCard != null) ...[const SizedBox(width: 16), _reveal(t('their_card_was'), g.oppCard!)],
+                  _pill('${t('moves')}: ${r.moves}'),
+                  const SizedBox(width: 8),
+                  _pill('+$_xpGain XP', color: C.gold),
                 ],
               ),
-              const SizedBox(height: 12),
-              Text('${t('moves')}: ${r.moves}   ·   +$_xpGain XP', style: const TextStyle(color: C.muted)),
-              if (widget.daily) Padding(padding: const EdgeInsets.only(top: 6), child: Text(t('come_back'))),
-              const SizedBox(height: 18),
-              if (!widget.daily)
-                FilledButton(
+              if (widget.daily) Padding(padding: const EdgeInsets.only(top: 10), child: Text(t('come_back'), style: const TextStyle(color: C.muted))),
+              const SizedBox(height: 20),
+              if (!widget.daily) ...[
+                LuxButton(
+                  label: t('play_again'),
                   onPressed: () {
                     Navigator.pop(c);
                     setState(() {
@@ -571,15 +739,16 @@ class _GameScreenState extends State<GameScreen> {
                       _newGame();
                     });
                   },
-                  child: Text(t('play_again')),
                 ),
-              const SizedBox(height: 10),
-              OutlinedButton(
+                const SizedBox(height: 10),
+              ],
+              GlassButton(
+                label: t('home'),
+                color: Colors.white,
                 onPressed: () {
                   Navigator.pop(c);
                   Navigator.pop(context);
                 },
-                child: Text(t('home')),
               ),
             ],
           ),
@@ -588,13 +757,78 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  Widget _reveal(String label, CardItem d) {
-    return Column(
-      children: [
-        Text(label, style: const TextStyle(color: C.muted, fontSize: 12)),
-        Text(d.emoji, style: const TextStyle(fontSize: 44)),
-        Text(d.name, style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-      ],
+  Widget _pill(String s, {Color color = Colors.white}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(color: C.glass, borderRadius: BorderRadius.circular(20), border: Border.all(color: C.glassBorder)),
+      child: Text(s, style: TextStyle(color: color, fontWeight: FontWeight.w700)),
+    );
+  }
+
+  Widget _reveal(String label, CardItem d, Gradient grad) {
+    return GradientFrame(
+      gradient: grad,
+      fill: const Color(0xFF1A1536),
+      radius: 20,
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+      child: Column(
+        children: [
+          Text(label, style: const TextStyle(color: C.muted, fontSize: 12)),
+          const SizedBox(height: 4),
+          Text(d.emoji, style: const TextStyle(fontSize: 40)),
+          const SizedBox(height: 2),
+          Text(d.name,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+        ],
+      ),
+    );
+  }
+}
+
+/// A question as an elegant glass tile with a gold accent bar.
+class QuestionTile extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+  const QuestionTile({super.key, required this.text, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: const Color(0x14FFFFFF),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: C.gold.withValues(alpha: 0.22)),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: C.gold.withValues(alpha: 0.18),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Container(
+              width: 4,
+              decoration: const BoxDecoration(gradient: C.goldGrad),
+            ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                child: Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Text(
+                  text,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 13.5, fontWeight: FontWeight.w600, height: 1.3),
+                ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -5,6 +5,7 @@ import 'package:guessy/main.dart';
 import 'package:guessy/data.dart';
 import 'package:guessy/game.dart';
 import 'package:guessy/strings.dart';
+import 'package:guessy/screens/game_screen.dart';
 
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
@@ -33,8 +34,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(t('your_turn')), findsOneWidget);
 
-    expect(find.byType(ActionChip), findsWidgets);
-    await tester.tap(find.byType(ActionChip).first);
+    expect(find.byType(QuestionTile), findsWidgets);
+    await tester.tap(find.byType(QuestionTile).first);
     await tester.pump(const Duration(seconds: 2));
     await tester.pumpAndSettle();
     expect(find.text(t('answer_opp')), findsWidgets);

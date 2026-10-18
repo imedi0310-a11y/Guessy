@@ -36,6 +36,14 @@ jobs:
           sed -i 's/signingConfig = signingConfigs.getByName("debug")/signingConfig = signingConfigs.getByName("debug")\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")/' $G
           grep -n -A3 'release {' $G
 
+      - name: Download fonts
+        run: |
+          mkdir -p assets/fonts
+          for w in Regular Medium Bold ExtraBold Black; do
+            curl -sSfL -o assets/fonts/Tajawal-$w.ttf https://github.com/google/fonts/raw/main/ofl/tajawal/Tajawal-$w.ttf
+          done
+          ls -la assets/fonts
+
       - name: Get packages + app icon
         run: |
           flutter pub get
@@ -53,6 +61,12 @@ jobs:
           set -o pipefail
           flutter test --reporter expanded 2>&1 | tee test.txt || { grep -v '^\s*$' test.txt | tail -c 7000 | python3 -c "import sys;d=sys.stdin.read().replace('%','%25').replace('\r','').replace('\n','%0A');print('::error title=tests::'+d)"; exit 1; }
 
+      - name: Design screenshots
+        continue-on-error: true
+        run: |
+          flutter test screenshot/shots_test.dart --update-goldens || true
+          ls screenshot/goldens || true
+
       - name: Build APK
         run: |
           flutter build apk --release --split-per-abi --target-platform android-arm64,android-arm
@@ -69,5 +83,6 @@ jobs:
           files: |
             Guessy.apk
             Guessy-old-phones.apk
+            screenshot/goldens/*.png
           body: |
             Download **Guessy.apk** (most phones). Use Guessy-old-phones.apk only if the first one doesn't install.
