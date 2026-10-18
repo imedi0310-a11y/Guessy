@@ -99,7 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(height: 12),
             OutlinedButton.icon(
               onPressed: dailyDone == null ? _playDaily : null,
-              icon: const Text('📅', style: TextStyle(fontSize: 18)),
+              icon: const Text('⭐', style: TextStyle(fontSize: 18)),
               label: Text(dailyDone == null ? t('daily') : '${t('daily')} · ${t('daily_done_today')}'),
             ),
             const SizedBox(height: 22),

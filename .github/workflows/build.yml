@@ -36,8 +36,10 @@ jobs:
           sed -i 's/signingConfig = signingConfigs.getByName("debug")/signingConfig = signingConfigs.getByName("debug")\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")/' $G
           grep -n -A3 'release {' $G
 
-      - name: Get packages
-        run: flutter pub get
+      - name: Get packages + app icon
+        run: |
+          flutter pub get
+          dart run flutter_launcher_icons
 
       - name: Analyze (errors become annotations)
         run: |

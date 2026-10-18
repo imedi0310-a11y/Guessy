@@ -144,7 +144,7 @@ class _GameScreenState extends State<GameScreen> {
         children: [
           Expanded(
             child: _cardBox(
-              title: '${t('you')} · ${t('your_card')}',
+              title: t('you'),
               sub: t('on_head'),
               emoji: '❓',
               name: '???',
@@ -157,12 +157,12 @@ class _GameScreenState extends State<GameScreen> {
                 ? _cardBox(
                     title: t('cards_left'),
                     sub: widget.cat.label,
-                    emoji: '📅',
+                    emoji: '⭐',
                     name: '${g.possible.length}',
                     color: C.pink,
                   )
                 : _cardBox(
-                    title: '${t('ai_name')} · ${t('their_card')}',
+                    title: t('ai_name'),
                     sub: t('you_see'),
                     emoji: opp!.emoji,
                     name: opp.name,
