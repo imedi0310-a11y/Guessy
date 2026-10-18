@@ -56,6 +56,9 @@ class Prefs {
   static String get cat => _getString('cat') ?? 'animals';
   static set cat(String v) => _setString('cat', v);
 
+  static bool get soundOn => (_getInt('sound') ?? 1) == 1;
+  static set soundOn(bool v) => _setInt('sound', v ? 1 : 0);
+
   static String get diff => _getString('diff') ?? 'mid';
   static set diff(String v) => _setString('diff', v);
 

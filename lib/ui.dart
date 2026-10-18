@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'sfx.dart';
 import 'theme.dart';
 
 /// Page background: deep midnight gradient with a soft violet glow at the top.
@@ -244,6 +245,22 @@ class GlassIconButton extends StatelessWidget {
         customBorder: const CircleBorder(),
         onTap: onPressed,
         child: SizedBox(width: 44, height: 44, child: Icon(icon, size: 22, color: Colors.white)),
+      ),
+    );
+  }
+}
+
+/// Speaker on/off toggle.
+class SoundButton extends StatelessWidget {
+  const SoundButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: Sfx.on,
+      builder: (_, on, __) => GlassIconButton(
+        icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
+        onPressed: Sfx.toggle,
       ),
     );
   }

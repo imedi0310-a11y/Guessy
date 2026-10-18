@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'data.dart';
 import 'prefs.dart';
+import 'sfx.dart';
 import 'strings.dart';
 import 'theme.dart';
 import 'screens/home.dart';
@@ -17,6 +18,7 @@ void main() {
 Future<void> bootstrap() async {
   await Prefs.init();
   await GameData.load();
+  Sfx.init();
   langNotifier.value = Lang.code;
 }
 

@@ -130,6 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+        const SoundButton(),
+        const SizedBox(width: 8),
         GlassIconButton(icon: Icons.translate_rounded, onPressed: _pickLanguage),
       ],
     );

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../data.dart';
 import '../game.dart';
 import '../prefs.dart';
+import '../sfx.dart';
 import '../strings.dart';
 import '../theme.dart';
 import '../ui.dart';
@@ -23,6 +25,8 @@ class _GameScreenState extends State<GameScreen> {
   int _lastLog = 0;
   bool _resultShown = false;
   int _xpGain = 0;
+  int _sndLen = 0;
+  int _prevSecs = 99;
 
   @override
   void initState() {
@@ -37,12 +41,34 @@ class _GameScreenState extends State<GameScreen> {
     };
     g.addListener(_onChange);
     _lastLog = 0;
+    _sndLen = 0;
+    _prevSecs = 99;
     _resultShown = false;
+  }
+
+  void _sounds() {
+    if (g.log.length > _sndLen) {
+      final e = g.log.last;
+      if (e.who == Who.me) {
+        if (e.kind == Kind.q) {
+          Sfx.play(e.ans == 'yes' ? 'yes' : 'no');
+        } else if (e.ok == false) {
+          Sfx.play('wrong', haptic: true);
+        }
+      } else {
+        Sfx.play('pop');
+      }
+    }
+    _sndLen = g.log.length;
+    final myClock = g.turn == Who.me && g.pending == null && g.over == null && !widget.daily;
+    if (myClock && g.secsLeft <= 10 && g.secsLeft > 0 && g.secsLeft != _prevSecs) Sfx.play('tick');
+    _prevSecs = g.secsLeft;
   }
 
   void _onChange() {
     if (!mounted) return;
     setState(() {});
+    _sounds();
     final f = g.flash;
     if (f != null) {
       g.flash = null;
@@ -61,6 +87,7 @@ class _GameScreenState extends State<GameScreen> {
     }
     if (g.over != null && !_resultShown) {
       _resultShown = true;
+      Sfx.play(g.over!.win ? 'win' : 'lose', haptic: true);
       Future.delayed(const Duration(milliseconds: 500), _showResult);
     }
   }
@@ -136,7 +163,9 @@ class _GameScreenState extends State<GameScreen> {
               ],
             ),
           ),
-          if (!widget.daily) _timerRing() else const SizedBox(width: 44),
+          const SoundButton(),
+          const SizedBox(width: 8),
+          if (!widget.daily) _timerRing() else const SizedBox(width: 4),
         ],
       ),
     );
@@ -486,7 +515,12 @@ class _GameScreenState extends State<GameScreen> {
                   mainAxisExtent: 168,
                 ),
                 itemCount: qs.length,
-                itemBuilder: (_, i) => QuestionTile(text: qs[i].text, onTap: () => g.ask(qs[i])),
+                itemBuilder: (_, i) => QuestionTile(
+                    text: qs[i].text,
+                    onTap: () {
+                      HapticFeedback.selectionClick();
+                      g.ask(qs[i]);
+                    }),
               ),
             ),
           ),
@@ -511,7 +545,12 @@ class _GameScreenState extends State<GameScreen> {
           shape: StadiumBorder(side: BorderSide(color: enabled ? C.gold.withValues(alpha: 0.5) : C.glassBorder)),
           child: InkWell(
             customBorder: const StadiumBorder(),
-            onTap: enabled ? onTap : null,
+            onTap: enabled
+                ? () {
+                    Sfx.play('magic', haptic: true);
+                    onTap();
+                  }
+                : null,
             child: SizedBox(
               height: 36,
               child: Row(
@@ -574,7 +613,10 @@ class _GameScreenState extends State<GameScreen> {
                 gradient: C.greenGrad,
                 textColor: C.ink,
                 height: 54,
-                onPressed: () => g.answer(true),
+                onPressed: () {
+                  Sfx.play('tap', haptic: true);
+                  g.answer(true);
+                },
               ),
             ),
             const SizedBox(width: 12),
@@ -584,7 +626,10 @@ class _GameScreenState extends State<GameScreen> {
                 gradient: C.roseGrad,
                 textColor: Colors.white,
                 height: 54,
-                onPressed: () => g.answer(false),
+                onPressed: () {
+                  Sfx.play('tap', haptic: true);
+                  g.answer(false);
+                },
               ),
             ),
           ],
@@ -595,6 +640,7 @@ class _GameScreenState extends State<GameScreen> {
 
   // ---------------- deck ----------------
   void _openDeck() {
+    Sfx.play('tap');
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,

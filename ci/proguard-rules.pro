@@ -4,3 +4,4 @@
 -keep class dev.flutter.pigeon.** { *; }
 -keepclassmembers class * { @androidx.annotation.Keep *; }
 -dontwarn io.flutter.embedding.**
+-keep class xyz.luan.audioplayers.** { *; }
