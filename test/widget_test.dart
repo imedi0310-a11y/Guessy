@@ -33,9 +33,8 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(t('your_turn')), findsOneWidget);
 
-    await tester.tap(find.text('❓ ${t('ask')}'));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byType(ListTile).first);
+    expect(find.byType(ActionChip), findsWidgets);
+    await tester.tap(find.byType(ActionChip).first);
     await tester.pump(const Duration(seconds: 2));
     await tester.pumpAndSettle();
     expect(find.text(t('answer_opp')), findsWidgets);

@@ -308,23 +308,36 @@ class _GameScreenState extends State<GameScreen> {
               ],
             ),
           if (!widget.daily) const SizedBox(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: FilledButton(
-                  onPressed: g.unasked.isEmpty ? null : _openQuestions,
-                  child: Text('❓ ${t('ask')}'),
-                ),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: Text('❓ ${g.unasked.isEmpty ? t('no_q_left') : t('pick_q')}',
+                style: const TextStyle(color: C.muted, fontSize: 13, fontWeight: FontWeight.w600)),
+          ),
+          const SizedBox(height: 6),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.26),
+            child: SingleChildScrollView(
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 6,
+                children: [
+                  for (final q in g.unasked)
+                    ActionChip(
+                      label: Text(q.text, style: const TextStyle(fontSize: 13.5)),
+                      backgroundColor: C.surface2,
+                      side: BorderSide(color: C.yellow.withValues(alpha: 0.45)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      onPressed: () => g.ask(q),
+                    ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FilledButton(
-                  style: FilledButton.styleFrom(backgroundColor: C.pink, foregroundColor: Colors.white),
-                  onPressed: _openDeck,
-                  child: Text('🎯 ${t('guess')}'),
-                ),
-              ),
-            ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          FilledButton(
+            style: FilledButton.styleFrom(backgroundColor: C.pink, foregroundColor: Colors.white),
+            onPressed: _openDeck,
+            child: Text('🎯 ${t('guess')}'),
           ),
         ],
       );
