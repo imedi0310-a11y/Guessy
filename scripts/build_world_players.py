@@ -42,7 +42,8 @@ if len(ids) < 50:
 P = {i: {'names': {}, 'countries': set(), 'continents': set(), 'iso': None, 'pos': set(), 'teams': set(),
          'leagues': set(), 'awards': set(), 'born': None, 'dead': False, 'img': None} for i in ids}
 
-LEAGUES = {'Premier League': 'prem', 'La Liga': 'liga', 'Serie A': 'seriea', 'Bundesliga': 'bundes',
+LEAGUE_IDS = {'Q9448': 'prem', 'Q324867': 'liga', 'Q15804': 'seriea', 'Q82595': 'bundes', 'Q13394': 'ligue1'}
+LEAGUES = {'Premier League': 'prem', 'La Liga': 'liga', 'LaLiga': 'liga', 'Saudi Professional League': 'saudi', 'Serie A': 'seriea', 'Bundesliga': 'bundes',
            'Ligue 1': 'ligue1', 'Saudi Pro League': 'saudi'}
 CLUBS = {'Q8682': 'real', 'Q7156': 'barca', 'Q483020': 'psg', 'Q18656': 'manu', 'Q1130849': 'liv', 'Q9616': 'che',
          'Q9617': 'ars', 'Q50602': 'mci', 'Q1422': 'juve', 'Q1543': 'milan', 'Q631': 'inter', 'Q15789': 'bayern'}
@@ -87,18 +88,21 @@ for k in range(0, len(ids), 80):
         if 'iso' in r:
             e['iso'] = r['iso']['value']
     # positions
-    for r in sparql(f'''SELECT ?p ?pl WHERE {{ VALUES ?p {{ {vals} }} ?p wdt:P413 ?pos .
+    for r in sparql(f'''SELECT ?p ?pl WHERE {{ VALUES ?p {{ {vals} }} ?p p:P413/ps:P413 ?pos .
         ?pos rdfs:label ?pl FILTER(LANG(?pl)="en") }}'''):
         P[qid(r['p']['value'])]['pos'].add(r['pl']['value'].lower())
     # clubs and their leagues
-    for r in sparql(f'''SELECT ?p ?t ?ll WHERE {{ VALUES ?p {{ {vals} }} ?p wdt:P54 ?t .
-        OPTIONAL {{ ?t wdt:P118 ?lg . ?lg rdfs:label ?ll FILTER(LANG(?ll)="en") }} }}'''):
+    # p:/ps: = ALL club statements (wdt: would only return the 'preferred' current club)
+    for r in sparql(f'''SELECT ?p ?t ?lg ?ll WHERE {{ VALUES ?p {{ {vals} }} ?p p:P54/ps:P54 ?t .
+        OPTIONAL {{ ?t wdt:P118 ?lg . OPTIONAL {{ ?lg rdfs:label ?ll FILTER(LANG(?ll)="en") }} }} }}'''):
         x = P[qid(r['p']['value'])]
         x['teams'].add(qid(r['t']['value']))
+        if 'lg' in r and qid(r['lg']['value']) in LEAGUE_IDS:
+            x['leagues'].add(LEAGUE_IDS[qid(r['lg']['value'])])
         if 'll' in r and r['ll']['value'] in LEAGUES:
             x['leagues'].add(LEAGUES[r['ll']['value']])
     # Ballon d'Or
-    for r in sparql(f'''SELECT ?p WHERE {{ VALUES ?p {{ {vals} }} ?p wdt:P166 wd:Q166177 }}'''):
+    for r in sparql(f'''SELECT DISTINCT ?p WHERE {{ VALUES ?p {{ {vals} }} ?p p:P166/ps:P166 wd:Q166177 }}'''):
         P[qid(r['p']['value'])]['awards'].add('bdo')
     time.sleep(1)
 
@@ -136,16 +140,16 @@ for i in ids:
     pos = ' '.join(x['pos'])
     if 'goalkeeper' in pos:
         f.add('gk')
-    elif any(w in pos for w in ('back', 'defender', 'sweeper', 'libero')):
-        f.add('def')
-    elif 'midfielder' in pos:
-        f.add('mid')
     elif any(w in pos for w in ('forward', 'striker', 'winger')):
         f.add('fwd')
+    elif 'midfielder' in pos:
+        f.add('mid')
+    elif any(w in pos for w in ('back', 'defender', 'sweeper', 'libero')):
+        f.add('def')
     else:
         continue  # unknown position -> skip, answers must be reliable
-    if x['born'] is None:
-        continue
+    if x['born'] is None or x['born'] < 1920 or len(x['teams']) < 3:
+        continue  # skips people famous for something else (e.g. scientists who played as amateurs)
     if x['born'] < 1970:
         f.add('b70')
     if x['born'] < 1990:
@@ -199,6 +203,6 @@ for c in cards:
     time.sleep(0.1)
 
 json.dump({'cards': cards}, open('assets/data/world.json', 'w'), ensure_ascii=False, separators=(',', ':'))
-sample = cards[:3]
+sample = cards[:4]
 print(f'::notice title=world players::{len(cards)} players, {got} photos. sample: ' +
       ' | '.join(f"{s['name']['ar']} {s['emoji']} {','.join(s['flags'])}" for s in sample))
