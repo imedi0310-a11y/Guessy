@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'data.dart';
 import 'strings.dart';
 
-const _dbUrl = 'https://guessy-39af7-default-rtdb.firebaseio.com';
+const _dbUrl = 'https://guessy-39af7-default-rtdb.europe-west1.firebasedatabase.app';
 
 /// Firebase connection (anonymous auth + Realtime Database).
 class Online {
