@@ -354,8 +354,16 @@ const _phrases = {
   'مانشستر سيتي': 'سيتي', 'real madrid': 'ريال مدريد', 'still alive': 'alive', 'تيك توك': 'يوتيوب',
 };
 
+/// Also drops attached بال / وال / فال / كال ("بالكرة" -> "كرة") — questions only, not names.
+String _qStrip(String w) {
+  for (final p in const ['بال', 'وال', 'فال', 'كال']) {
+    if (w.length > 5 && w.startsWith(p)) return w.substring(3);
+  }
+  return _strip(w);
+}
+
 String _canonWord(String w) {
-  w = _strip(w);
+  w = _qStrip(w);
   if (w.length > 4 && w.startsWith('لل')) w = w.substring(1); // لليفربول -> ليفربول
   return _syn[w] ?? w;
 }
@@ -368,11 +376,16 @@ class _QTok {
 
 List<_QTok> _qTokens(String s) {
   var n = ' ${normText(s).replaceAll('’', ' ').replaceAll("'", ' ')} ';
-  _phrases.forEach((k, v) => n = n.replaceAll(' ${normText(k)} ', ' $v '));
+  _phrases.forEach((k, v) {
+    final nk = normText(k);
+    for (final pre in const ['', 'ل', 'ب', 'و']) {
+      n = n.replaceAll(' $pre$nk ', ' $v ');
+    }
+  });
   final out = <_QTok>[];
   for (final raw in n.split(' ')) {
     if (raw.isEmpty) continue;
-    final w0 = _strip(raw);
+    final w0 = _qStrip(raw);
     if (_filler.contains(raw) || _filler.contains(w0)) continue;
     final a = _anti[w0] ?? _anti[raw];
     if (a != null) {
