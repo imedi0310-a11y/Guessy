@@ -59,6 +59,11 @@ class Prefs {
   static String get name => _getString('name') ?? '';
   static set name(String v) => _setString('name', v);
 
+  static String get myId => _getString('my_id') ?? '';
+  static set myId(String v) => _setString('my_id', v);
+  static String get friendsRaw => _getString('friends') ?? '';
+  static set friendsRaw(String v) => _setString('friends', v);
+
   static bool get soundOn => (_getInt('sound') ?? 1) == 1;
   static set soundOn(bool v) => _setInt('sound', v ? 1 : 0);
 

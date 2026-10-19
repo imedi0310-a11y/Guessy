@@ -6,8 +6,12 @@ import '../prefs.dart';
 import '../strings.dart';
 import '../theme.dart';
 import '../ui.dart';
+import '../sfx.dart';
 import 'game_screen.dart';
 import 'online_screen.dart';
+import 'friends_screen.dart';
+import '../online.dart';
+import '../social.dart';
 import '../invite.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -20,6 +24,50 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late String catId = Prefs.cat;
   late String diff = Prefs.diff;
+
+  @override
+  void initState() {
+    super.initState();
+    Social.incoming.addListener(_onInvite);
+    Social.start();
+  }
+
+  @override
+  void dispose() {
+    Social.incoming.removeListener(_onInvite);
+    super.dispose();
+  }
+
+  Future<void> _onInvite() async {
+    final inv = Social.incoming.value;
+    if (inv == null || !mounted) return;
+    Social.incoming.value = null;
+    Sfx.play('pop', haptic: true);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (c) => AlertDialog(
+        title: Text('🎮 ${inv.fromName}', textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w900)),
+        content: Text(t('invite_from'), textAlign: TextAlign.center),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(c, false), child: Text(t('decline'))),
+          SizedBox(width: 130, child: LuxButton(label: t('accept'), height: 46, onPressed: () => Navigator.pop(c, true))),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    try {
+      final name = Prefs.name.trim().isEmpty ? t('you') : Prefs.name.trim();
+      final seat = await Online.joinRoom(inv.code, name);
+      if (!mounted) return;
+      await Navigator.of(context).push(MaterialPageRoute(builder: (_) => OnlineGameScreen(code: inv.code, seat: seat)));
+      if (mounted) setState(() {});
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('room_not_found'))));
+      }
+    }
+  }
 
   Future<void> _open(Widget screen) async {
     await Navigator.of(context).push(PageRouteBuilder(
@@ -100,6 +148,12 @@ class _HomeScreenState extends State<HomeScreen> {
               _diffPicker(),
               const SizedBox(height: 28),
               LuxButton(label: t('play_ai'), icon: '🤖', onPressed: _playAI),
+              const SizedBox(height: 12),
+              GlassButton(
+                icon: '👥',
+                label: t('friends'),
+                onPressed: () => _open(FriendsScreen(catId: catId)),
+              ),
               const SizedBox(height: 12),
               GlassButton(
                 icon: '🌐',
@@ -191,6 +245,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 Text('${t('lvl')} ${Prefs.level}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 2),
                 Text('${Prefs.xp} XP', style: const TextStyle(color: C.gold, fontWeight: FontWeight.w700)),
+                ValueListenableBuilder<String?>(
+                  valueListenable: Social.myId,
+                  builder: (_, id, __) => id == null
+                      ? const SizedBox.shrink()
+                      : Text('ID: $id', style: const TextStyle(color: C.muted, fontSize: 12, letterSpacing: 1.5, fontWeight: FontWeight.w700)),
+                ),
                 const SizedBox(height: 10),
                 Row(
                   children: [

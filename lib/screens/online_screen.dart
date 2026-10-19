@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data.dart';
 import '../online.dart';
+import '../social.dart';
 import '../invite.dart';
 import '../prefs.dart';
 import '../sfx.dart';
@@ -48,6 +49,7 @@ class _OnlineLobbyState extends State<OnlineLobby> {
       _err = null;
     });
     Prefs.name = _name.text.trim();
+    Social.updateName();
     try {
       final (code, seat) = await action().timeout(const Duration(seconds: 15));
       if (!mounted) return;
