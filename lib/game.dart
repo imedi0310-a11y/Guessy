@@ -112,11 +112,13 @@ class GameController extends ChangeNotifier {
   }
 
   // ---------- player actions ----------
-  void ask(Attr a) {
+  /// [not] = the player asked the opposite ("is he alive?" for "has he died?"), so the shown answer flips.
+  void ask(Attr a, {bool not = false, String? asText}) {
     if (!canAct || myKnown.containsKey(a.key)) return;
     final yes = myCard.flags.contains(a.key);
     myKnown[a.key] = yes;
-    log.add(LogEntry(Who.me, Kind.q, a.text, ans: yes ? 'yes' : 'no'));
+    final shown = not ? !yes : yes;
+    log.add(LogEntry(Who.me, Kind.q, asText ?? a.text, ans: shown ? 'yes' : 'no'));
     _afterMyTurn();
   }
 
@@ -149,20 +151,12 @@ class GameController extends ChangeNotifier {
       candidates = named;
       return 'amb';
     }
-    Attr? best;
-    var bestScore = 0.0;
-    for (final a in cat.attrs) {
-      for (final v in a.q.values) {
-        final sc = qSimilarity(text, '$v');
-        if (sc > bestScore) {
-          bestScore = sc;
-          best = a;
-        }
-      }
-    }
-    if (best == null || bestScore < 0.5) return null;
-    if (myKnown.containsKey(best.key)) return 'dup';
-    ask(best);
+    final m = matchQuestion(text, cat.attrs);
+    if (m == null) return null;
+    if (myKnown.containsKey(m.attr.key)) return 'dup';
+    var q = text.trim();
+    if (!q.endsWith('?') && !q.endsWith('؟')) q += Lang.code == 'ar' ? '؟' : '?';
+    ask(m.attr, not: m.not, asText: m.not ? q : null);
     return 'q';
   }
 
