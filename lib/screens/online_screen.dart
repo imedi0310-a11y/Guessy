@@ -186,6 +186,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   int _prevSecs = 99;
   bool _endSound = false;
   int _answeredF = 0;
+  String? _rrBy;
   final _voicePlayer = AudioPlayer();
   final _freeCtrl = TextEditingController();
   final stt.SpeechToText _stt = stt.SpeechToText();
@@ -209,6 +210,19 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       _logLen = log.length;
       _endSound = false;
     }
+    if (log.length < _logLen) _logLen = log.length;
+    if (g.rerollBy != _rrBy) {
+      final first = _rrBy == null;
+      _rrBy = g.rerollBy;
+      if (!first && _rrBy!.isNotEmpty) {
+        Sfx.play('magic', haptic: true);
+        if (!_rrBy!.startsWith(g.me)) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(t('friend_changed'))));
+        }
+      }
+    }
     if (log.length > _logLen) {
       final e = log.last;
       if (e.kind == 'f') {
@@ -230,6 +244,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       final a = answered.last;
       if (a.who == g.me) Sfx.play(a.raw == 1 ? 'yes' : a.raw == 0 ? 'no' : 'magic');
     }
+    if (answered.length < _answeredF) _answeredF = answered.length;
     _answeredF = answered.length;
     final voice = g.lastVoice;
     if (voice != null) {
@@ -471,8 +486,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
               ),
             ),
           ),
-          if (over == null)
+          if (over == null) ...[
+            RerollChip(left: OnlineGame.maxRerolls - g.rerolls, onTap: g.reroll),
+            const SizedBox(width: 8),
             Text('⏱ ${g.secsLeft}', style: TextStyle(fontWeight: FontWeight.w900, color: low ? C.pink : C.gold)),
+          ],
         ],
       ),
     );

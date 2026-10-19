@@ -222,6 +222,9 @@ class OnlineGame extends ChangeNotifier {
   String? get over => room['over'] is Map ? '${room['over']['win']}' : null;
   int score(String seat) => (room['score'] is Map && room['score'][seat] is num) ? (room['score'][seat] as num).toInt() : 0;
   int get round => (room['round'] is num) ? (room['round'] as num).toInt() : 0;
+  static const maxRerolls = 3;
+  int get rerolls => (room['rr'] is num) ? (room['rr'] as num).toInt() : 0;
+  String get rerollBy => '${room['rrBy'] ?? ''}';
 
   List<OnlineEntry> get log {
     final l = room['log'];
@@ -292,6 +295,8 @@ class OnlineGame extends ChangeNotifier {
       'log': null,
       'over': null,
       'round': round + 1,
+      'rr': 0,
+      'rrBy': null,
     });
   }
 
@@ -330,6 +335,23 @@ class OnlineGame extends ChangeNotifier {
     final p = pendingFree;
     if (p == null || p.who == me) return;
     await ref.update({'log/${p.id}/y': a, 'turn': me, 'turnAt': ServerValue.timestamp});
+  }
+
+  /// New cards for both players (when nobody knows them). Max 3 per round.
+  Future<void> reroll() async {
+    if (over != null || rerolls >= maxRerolls || !ready) return;
+    final cards = cat.cards;
+    final r = Random();
+    final old = {myCard?.id, oppCard?.id};
+    final pool = cards.where((c) => !old.contains(c.id)).toList()..shuffle(r);
+    if (pool.length < 2) return;
+    await ref.update({
+      'cards': {'h': pool[0].id, 'g': pool[1].id},
+      'log': null,
+      'rr': rerolls + 1,
+      'rrBy': '$me${DateTime.now().millisecondsSinceEpoch}',
+      'turnAt': ServerValue.timestamp,
+    });
   }
 
   Future<void> sendVoice(Uint8List bytes) async {

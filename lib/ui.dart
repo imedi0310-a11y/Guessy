@@ -309,3 +309,30 @@ class CardPic extends StatelessWidget {
     );
   }
 }
+
+/// "Change cards" pill: shows how many changes are left this round.
+class RerollChip extends StatelessWidget {
+  final int left;
+  final VoidCallback onTap;
+  const RerollChip({super.key, required this.left, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final on = left > 0;
+    return Opacity(
+      opacity: on ? 1 : 0.35,
+      child: Material(
+        color: C.glass,
+        shape: StadiumBorder(side: BorderSide(color: on ? C.violet.withValues(alpha: 0.7) : C.glassBorder)),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: on ? onTap : null,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            child: Text('🔄 $left', style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13)),
+          ),
+        ),
+      ),
+    );
+  }
+}

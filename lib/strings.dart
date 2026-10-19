@@ -126,6 +126,8 @@ const Map<String, List<String>> _s = {
   'invite_app_msg': ['🎮 جرّب Guessy: لعبة خمّن البطاقة التي على رأسك 🤔 العب ضد الذكاء الاصطناعي أو مع أصدقائك أونلاين! حمّلها من هنا:', '🎮 Try Guessy: guess the card on your head 🤔 Play vs AI or with friends online! Download:', '🎮 Essaie Guessy : devine la carte sur ta tête 🤔 Joue contre l’IA ou avec tes amis ! Télécharge :', '🎮 Prueba Guessy: adivina la carta en tu cabeza 🤔 ¡Juega contra la IA o con amigos! Descarga:', '🎮 Experimente Guessy: adivinhe a carta na sua cabeça 🤔 Jogue contra a IA ou com amigos! Baixe:'],
   'id_8_digits': ['الـ ID يتكون من 8 أرقام','The ID has 8 digits','L’ID contient 8 chiffres','El ID tiene 8 dígitos','O ID tem 8 dígitos'],
   'photo_credit': ['الصور من ويكيبيديا (Wikimedia Commons) برخص حرة','Photos: Wikipedia / Wikimedia Commons (free licenses)','Photos : Wikipédia / Wikimedia Commons (licences libres)','Fotos: Wikipedia / Wikimedia Commons (licencias libres)','Fotos: Wikipédia / Wikimedia Commons (licenças livres)'],
+  'cards_changed': ['تم تغيير البطاقات 🔄','Cards changed 🔄','Cartes changées 🔄','Cartas cambiadas 🔄','Cartas trocadas 🔄'],
+  'friend_changed': ['صديقك غيّر البطاقات 🔄','Your friend changed the cards 🔄','Ton ami a changé les cartes 🔄','Tu amigo cambió las cartas 🔄','Seu amigo trocou as cartas 🔄'],
   'friends': ['الأصدقاء', 'Friends', 'Amis', 'Amigos', 'Amigos'],
   'my_id': ['الـ ID الخاص بك', 'Your ID', 'Ton ID', 'Tu ID', 'Seu ID'],
   'add_friend': ['أضف صديقاً بالـ ID', 'Add a friend by ID', 'Ajouter un ami par ID', 'Añadir amigo por ID', 'Adicionar amigo por ID'],

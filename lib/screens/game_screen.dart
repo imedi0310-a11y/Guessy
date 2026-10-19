@@ -25,6 +25,7 @@ class _GameScreenState extends State<GameScreen> {
   int _lastLog = 0;
   bool _resultShown = false;
   int _xpGain = 0;
+  int _rerolls = 0;
   int _sndLen = 0;
   int _prevSecs = 99;
 
@@ -342,6 +343,25 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
           const SizedBox(width: 10),
+          if (!widget.daily && g.over == null) ...[
+            RerollChip(
+              left: 3 - _rerolls,
+              onTap: () {
+                if (_rerolls >= 3) return;
+                Sfx.play('magic', haptic: true);
+                setState(() {
+                  _rerolls++;
+                  g.removeListener(_onChange);
+                  g.dispose();
+                  _newGame();
+                });
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(SnackBar(content: Text(t('cards_changed')), duration: const Duration(milliseconds: 1500)));
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
           Text('${g.possible.length}', style: const TextStyle(color: C.gold, fontWeight: FontWeight.w900, fontSize: 15)),
           const SizedBox(width: 4),
           Text(t('cards_left'), style: const TextStyle(color: C.muted, fontSize: 12)),
@@ -791,6 +811,7 @@ class _GameScreenState extends State<GameScreen> {
                     setState(() {
                       g.removeListener(_onChange);
                       g.dispose();
+                      _rerolls = 0;
                       _newGame();
                     });
                   },
