@@ -30,7 +30,10 @@ void main() {
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.reset);
       await tester.pumpWidget(const GuessyApp());
-      await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 500)));
+      for (var i = 0; i < 30 && find.text('Guessy').evaluate().isEmpty; i++) {
+        await tester.runAsync(() => Future<void>.delayed(const Duration(milliseconds: 200)));
+        await tester.pump();
+      }
       await tester.pumpAndSettle();
       langNotifier.value = lang;
       Lang.code = lang;
