@@ -343,11 +343,11 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
           const SizedBox(width: 10),
-          if (!widget.daily && g.over == null) ...[
+          if (!widget.daily && g.over == null && g.log.isEmpty) ...[
             RerollChip(
               left: 3 - _rerolls,
               onTap: () {
-                if (_rerolls >= 3) return;
+                if (_rerolls >= 3 || g.log.isNotEmpty) return;
                 Sfx.play('magic', haptic: true);
                 setState(() {
                   _rerolls++;

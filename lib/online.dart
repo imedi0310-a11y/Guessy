@@ -339,7 +339,7 @@ class OnlineGame extends ChangeNotifier {
 
   /// New cards for both players (when nobody knows them). Max 3 per round.
   Future<void> reroll() async {
-    if (over != null || rerolls >= maxRerolls || !ready) return;
+    if (over != null || rerolls >= maxRerolls || !ready || log.isNotEmpty) return;
     final cards = cat.cards;
     final r = Random();
     final old = {myCard?.id, oppCard?.id};

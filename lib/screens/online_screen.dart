@@ -487,8 +487,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             ),
           ),
           if (over == null) ...[
-            RerollChip(left: OnlineGame.maxRerolls - g.rerolls, onTap: g.reroll),
-            const SizedBox(width: 8),
+            if (g.log.isEmpty) ...[
+              RerollChip(left: OnlineGame.maxRerolls - g.rerolls, onTap: g.reroll),
+              const SizedBox(width: 8),
+            ],
             Text('⏱ ${g.secsLeft}', style: TextStyle(fontWeight: FontWeight.w900, color: low ? C.pink : C.gold)),
           ],
         ],
