@@ -1,5 +1,5 @@
 """Builds assets/data/images.json: card id -> free image URL from Wikipedia/Wikimedia Commons."""
-import json, re, sys, time, urllib.parse, urllib.request
+import json, re, sys, time, urllib.parse, urllib.request, urllib.error
 
 OVR = {
  'mouse':'House mouse','penguin':'Emperor penguin','fisherman':'Fishing','actor':'Acting','orange':'Orange (fruit)','dates':'Date palm','chorba soup':'Chorba','bourek':'Börek',
@@ -16,17 +16,26 @@ OVR = {
 }
 UA = 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy)'
 
+def fetch(req, timeout=20):
+    for i in range(6):
+        try:
+            return urllib.request.urlopen(req, timeout=timeout)
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 503) and i < 5:
+                time.sleep(2 * (i + 1)); continue
+            raise
+
 def summary(title):
     url = 'https://en.wikipedia.org/api/rest_v1/page/summary/' + urllib.parse.quote(title.replace(' ', '_'), safe='')
     req = urllib.request.Request(url, headers={'User-Agent': UA})
-    with urllib.request.urlopen(req, timeout=20) as r:
+    with fetch(req) as r:
         return json.load(r)
 
 def pageimage(title):
     url = ('https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=pageimages&piprop=thumbnail'
            '&pithumbsize=330&titles=' + urllib.parse.quote(title))
     req = urllib.request.Request(url, headers={'User-Agent': UA})
-    with urllib.request.urlopen(req, timeout=20) as r:
+    with fetch(req) as r:
         pages = json.load(r).get('query', {}).get('pages', {})
     for p in pages.values():
         th = p.get('thumbnail', {}).get('source')
@@ -61,7 +70,7 @@ for cat in cards['cats']:
             out[cid] = src
         except Exception as e:
             miss.append(f'{cid}={title} ({e.__class__.__name__})')
-        time.sleep(0.05)
+        time.sleep(0.15)
 # Download + shrink every photo into the app (works offline, no hotlinking problems)
 import io, os
 from PIL import Image
@@ -70,7 +79,7 @@ bundled = {}
 for cid, u in out.items():
     try:
         req = urllib.request.Request(u, headers={'User-Agent': UA})
-        with urllib.request.urlopen(req, timeout=30) as r:
+        with fetch(req, 30) as r:
             data = r.read()
         im = Image.open(io.BytesIO(data)).convert('RGB')
         w, h = im.size
@@ -83,10 +92,12 @@ for cid, u in out.items():
         bundled[cid] = path
     except Exception as e:
         miss.append(f'{cid} download {getattr(e, "code", e.__class__.__name__)}')
-    time.sleep(0.03)
+    time.sleep(0.1)
 out = bundled
 json.dump(out, open('assets/data/images.json', 'w'), ensure_ascii=False, indent=0)
 print(f'images: {len(out)} found, {len(miss)} missing')
 if miss:
     print('::notice title=missing images::' + ' | '.join(miss)[:3000])
 
+
+print(f'::notice title=photos bundled::{len(out)} of {sum(len(c["cards"]) for c in cards["cats"])}')
