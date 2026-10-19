@@ -301,7 +301,7 @@ class CardPic extends StatelessWidget {
         height: size,
         fit: BoxFit.cover,
         alignment: Alignment.topCenter,
-        httpHeaders: const {'User-Agent': 'GuessyApp/1.0 (Android)'},
+        httpHeaders: const {'User-Agent': 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy) Flutter'},
         fadeInDuration: const Duration(milliseconds: 200),
         placeholder: (_, __) => emoji,
         errorWidget: (_, __, ___) => emoji,

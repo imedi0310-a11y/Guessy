@@ -36,7 +36,6 @@ for cat in cards['cats']:
             if s.get('type') == 'disambiguation' or 'thumbnail' not in s:
                 miss.append(f'{cid}={title}'); continue
             src = s['thumbnail']['source']
-            src = re.sub(r'/(\d+)px-', '/400px-', src)
             out[cid] = src
         except Exception as e:
             miss.append(f'{cid}={title} ({e.__class__.__name__})')
@@ -45,3 +44,16 @@ json.dump(out, open('assets/data/images.json', 'w'), ensure_ascii=False, indent=
 print(f'images: {len(out)} found, {len(miss)} missing')
 if miss:
     print('::notice title=missing images::' + ' | '.join(miss)[:3000])
+
+# sanity check: can the photos actually be downloaded?
+codes = []
+for cid in ['players.mbappe', 'animals.lion', 'food.pizza']:
+    u = out.get(cid)
+    if not u: continue
+    try:
+        req = urllib.request.Request(u, headers={'User-Agent': 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy) Flutter'})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            codes.append(f'{cid}:{r.status}')
+    except Exception as e:
+        codes.append(f'{cid}:{getattr(e, "code", e.__class__.__name__)}')
+print('::notice title=photo check::' + ' '.join(codes) + ' sample=' + str(out.get('players.mbappe')))

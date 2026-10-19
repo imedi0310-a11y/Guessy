@@ -128,6 +128,8 @@ const Map<String, List<String>> _s = {
   'photo_credit': ['الصور من ويكيبيديا (Wikimedia Commons) برخص حرة','Photos: Wikipedia / Wikimedia Commons (free licenses)','Photos : Wikipédia / Wikimedia Commons (licences libres)','Fotos: Wikipedia / Wikimedia Commons (licencias libres)','Fotos: Wikipédia / Wikimedia Commons (licenças livres)'],
   'cards_changed': ['تم تغيير البطاقات 🔄','Cards changed 🔄','Cartes changées 🔄','Cartas cambiadas 🔄','Cartas trocadas 🔄'],
   'friend_changed': ['صديقك غيّر البطاقات 🔄','Your friend changed the cards 🔄','Ton ami a changé les cartes 🔄','Tu amigo cambió las cartas 🔄','Seu amigo trocou as cartas 🔄'],
+  'not_understood': ['لم أفهم السؤال 🤔 جرّب صياغة أخرى أو اختر من القائمة','I didn’t get that 🤔 Try other words or pick from the list','Je n’ai pas compris 🤔 Reformule ou choisis dans la liste','No lo entendí 🤔 Prueba otras palabras o elige de la lista','Não entendi 🤔 Tente outras palavras ou escolha da lista'],
+  'already_asked': ['سألت هذا السؤال من قبل ✓','You already asked that ✓','Déjà demandé ✓','Ya lo preguntaste ✓','Você já perguntou isso ✓'],
   'friends': ['الأصدقاء', 'Friends', 'Amis', 'Amigos', 'Amigos'],
   'my_id': ['الـ ID الخاص بك', 'Your ID', 'Ton ID', 'Tu ID', 'Seu ID'],
   'add_friend': ['أضف صديقاً بالـ ID', 'Add a friend by ID', 'Ajouter un ami par ID', 'Añadir amigo por ID', 'Adicionar amigo por ID'],

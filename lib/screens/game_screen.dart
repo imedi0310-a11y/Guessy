@@ -7,6 +7,7 @@ import '../sfx.dart';
 import '../strings.dart';
 import '../theme.dart';
 import '../ui.dart';
+import '../free_ask.dart';
 
 class GameScreen extends StatefulWidget {
   final Cat cat;
@@ -483,11 +484,22 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
+  void _freeAsk(String text) {
+    final r = g.askFree(text);
+    if (r == null || r == 'dup') {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(t(r == 'dup' ? 'already_asked' : 'not_understood'))));
+    }
+  }
+
   Widget _myTurnPanel() {
     final qs = g.unasked;
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
+        FreeAskBar(onSubmit: _freeAsk),
+        const SizedBox(height: 10),
         if (!widget.daily) ...[
           Row(
             children: [

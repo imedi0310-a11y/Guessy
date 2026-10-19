@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'data.dart';
 import 'strings.dart';
+import 'free_ask.dart';
 
 enum Who { me, opp }
 
@@ -130,6 +131,43 @@ class GameController extends ChangeNotifier {
     myWrong.add(c.id);
     flash = 'wrong_guess';
     _afterMyTurn();
+  }
+
+  /// Understands a typed/spoken question: returns 'q' (asked), 'g' (guessed) or null (not understood).
+  String? askFree(String text) {
+    if (!canAct) return null;
+    final n = normText(text);
+    // A card name in the question = a guess ("is it Mbappé?")
+    CardItem? named;
+    for (final c in cat.cards) {
+      for (final v in c.names.values) {
+        final nm = normText('$v');
+        if (nm.length >= 3 && (n == nm || n.contains(nm) || n.endsWith(' $nm'))) {
+          if (named == null || nm.length > normText(named.name).length) named = c;
+        }
+      }
+      final en = normText(c.en.replaceAll(RegExp(r'\s*\(.*\)'), ''));
+      if (en.length >= 3 && n.contains(en)) named ??= c;
+    }
+    if (named != null && !myWrong.contains(named.id)) {
+      guess(named);
+      return 'g';
+    }
+    Attr? best;
+    var bestScore = 0.0;
+    for (final a in cat.attrs) {
+      for (final v in a.q.values) {
+        final sc = qSimilarity(text, '$v');
+        if (sc > bestScore) {
+          bestScore = sc;
+          best = a;
+        }
+      }
+    }
+    if (best == null || bestScore < 0.5) return null;
+    if (myKnown.containsKey(best.key)) return 'dup';
+    ask(best);
+    return 'q';
   }
 
   void useHint() {
