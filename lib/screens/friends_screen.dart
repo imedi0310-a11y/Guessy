@@ -37,8 +37,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
   }
 
   Future<void> _add() async {
-    final id = _idCtrl.text.trim().toUpperCase();
-    if (id.length < 4 || _busy) return;
+    final id = _idCtrl.text.replaceAll(RegExp(r'[^0-9]'), '');
+    if (id.length != 8 || _busy) {
+      if (id.length != 8) _snack(t('id_8_digits'));
+      return;
+    }
     if (id == Social.myId.value) {
       _snack(t('cant_add_self'));
       return;
@@ -103,10 +106,11 @@ class _FriendsScreenState extends State<FriendsScreen> {
                   Expanded(
                     child: TextField(
                       controller: _idCtrl,
-                      maxLength: 6,
-                      textCapitalization: TextCapitalization.characters,
+                      maxLength: 8,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       textAlign: TextAlign.center,
-                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 6),
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 4),
                       decoration: InputDecoration(
                         hintText: t('enter_id'),
                         counterText: '',
@@ -149,7 +153,7 @@ class _FriendsScreenState extends State<FriendsScreen> {
           const SizedBox(height: 6),
           id == null
               ? const SizedBox(width: 22, height: 22, child: CircularProgressIndicator(strokeWidth: 2, color: C.gold))
-              : GradientText(id, style: const TextStyle(fontSize: 38, fontWeight: FontWeight.w900, letterSpacing: 6)),
+              : GradientText(id, style: const TextStyle(fontSize: 34, fontWeight: FontWeight.w900, letterSpacing: 4)),
           const SizedBox(height: 10),
           Row(children: [
             Expanded(

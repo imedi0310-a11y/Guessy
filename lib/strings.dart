@@ -124,6 +124,7 @@ const Map<String, List<String>> _s = {
   'invite_room_msg': ['🎮 تعال العب معي Guessy! خمّن البطاقة التي على رأسك 🤔\nرمز الغرفة:', '🎮 Come play Guessy with me! Guess the card on your head 🤔\nRoom code:', '🎮 Viens jouer à Guessy avec moi ! Devine la carte sur ta tête 🤔\nCode de la salle :', '🎮 ¡Ven a jugar Guessy conmigo! Adivina la carta en tu cabeza 🤔\nCódigo de sala:', '🎮 Venha jogar Guessy comigo! Adivinhe a carta na sua cabeça 🤔\nCódigo da sala:'],
   'invite_dl': ['حمّل اللعبة من هنا:', 'Download the game:', 'Télécharge le jeu :', 'Descarga el juego:', 'Baixe o jogo:'],
   'invite_app_msg': ['🎮 جرّب Guessy: لعبة خمّن البطاقة التي على رأسك 🤔 العب ضد الذكاء الاصطناعي أو مع أصدقائك أونلاين! حمّلها من هنا:', '🎮 Try Guessy: guess the card on your head 🤔 Play vs AI or with friends online! Download:', '🎮 Essaie Guessy : devine la carte sur ta tête 🤔 Joue contre l’IA ou avec tes amis ! Télécharge :', '🎮 Prueba Guessy: adivina la carta en tu cabeza 🤔 ¡Juega contra la IA o con amigos! Descarga:', '🎮 Experimente Guessy: adivinhe a carta na sua cabeça 🤔 Jogue contra a IA ou com amigos! Baixe:'],
+  'id_8_digits': ['الـ ID يتكون من 8 أرقام','The ID has 8 digits','L’ID contient 8 chiffres','El ID tiene 8 dígitos','O ID tem 8 dígitos'],
   'friends': ['الأصدقاء', 'Friends', 'Amis', 'Amigos', 'Amigos'],
   'my_id': ['الـ ID الخاص بك', 'Your ID', 'Ton ID', 'Tu ID', 'Seu ID'],
   'add_friend': ['أضف صديقاً بالـ ID', 'Add a friend by ID', 'Ajouter un ami par ID', 'Añadir amigo por ID', 'Adicionar amigo por ID'],

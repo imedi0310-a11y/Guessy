@@ -26,11 +26,13 @@ class Social {
   static StreamSubscription<DatabaseEvent>? _inv;
   static bool _starting = false;
 
+  /// 8-digit numeric ID, never starting with 0.
   static String _gen() {
-    const ch = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
     final r = Random.secure();
-    return List.generate(6, (_) => ch[r.nextInt(ch.length)]).join();
+    return '${r.nextInt(9) + 1}${List.generate(7, (_) => r.nextInt(10)).join()}';
   }
+
+  static bool _valid(String id) => RegExp(r'^[1-9][0-9]{7}$').hasMatch(id);
 
   static String get _name => Prefs.name.trim().isEmpty ? 'Guessy' : Prefs.name.trim();
 
@@ -43,6 +45,7 @@ class Social {
       if (!Online.available) return;
       final uid = await Online.uid();
       var id = Prefs.myId;
+      if (!_valid(id)) id = ''; // old letter IDs get a new numeric one
       if (id.isEmpty) {
         for (var i = 0; i < 8; i++) {
           final cand = _gen();
