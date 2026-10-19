@@ -2,9 +2,9 @@
 import json, re, sys, time, urllib.parse, urllib.request
 
 OVR = {
- 'mouse':'House mouse','orange':'Orange (fruit)','dates':'Date palm','chorba soup':'Chorba','bourek':'Börek',
+ 'mouse':'House mouse','penguin':'Emperor penguin','fisherman':'Fishing','actor':'Acting','orange':'Orange (fruit)','dates':'Date palm','chorba soup':'Chorba','bourek':'Börek',
  'zlabia (fried honey sweet)':'Jalebi','donut':'Doughnut','burger':'Hamburger','grilled fish':'Fish as food',
- 'mint tea':'Maghrebi mint tea','doctor':'Physician','pilot':'Aircraft pilot','fisherman':'Fisher',
+ 'mint tea':'Maghrebi mint tea','doctor':'Physician','pilot':'Aircraft pilot',
  'builder':'Construction worker','taxi driver':'Taxicab','postman':'Mail carrier','bank clerk':'Bank teller',
  'football player':'Association football','sports coach':'Coach (sport)','singer':'Singing','painter':'Painting',
  'computer':'Personal computer','radio':'Radio receiver','battery':'Electric battery','light bulb':'Incandescent light bulb',
