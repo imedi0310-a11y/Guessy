@@ -24,19 +24,34 @@ class _FreeAskBarState extends State<FreeAskBar> {
       ..showSnackBar(SnackBar(content: Text(s), duration: const Duration(seconds: 3)));
   }
 
+  void _onPartial() {
+    if (_listening && Voice.partial.value.isNotEmpty) _ctrl.text = Voice.partial.value;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Voice.partial.addListener(_onPartial);
+  }
+
   Future<void> _toggle() async {
-    if (_listening) return;
+    if (_listening) {
+      Voice.stop(); // finish now with what was heard
+      return;
+    }
     setState(() => _listening = true);
     Sfx.play('tap', haptic: true);
+    _ctrl.clear();
     try {
       final text = await Voice.listen();
       if (!mounted) return;
-      if (text != null && text.trim().isNotEmpty) {
-        _ctrl.text = text;
+      final heard = (text ?? '').trim().isNotEmpty ? text!.trim() : _ctrl.text.trim();
+      if (heard.isNotEmpty) {
+        _ctrl.text = heard;
         _send();
       }
     } catch (e) {
-      _snack(t('voice_unavailable'));
+      if (mounted) _snack(Voice.errorText(e));
     } finally {
       if (mounted) setState(() => _listening = false);
     }
@@ -52,6 +67,7 @@ class _FreeAskBarState extends State<FreeAskBar> {
 
   @override
   void dispose() {
+    Voice.partial.removeListener(_onPartial);
     _ctrl.dispose();
     super.dispose();
   }

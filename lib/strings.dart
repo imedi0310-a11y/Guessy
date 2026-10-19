@@ -131,6 +131,8 @@ const Map<String, List<String>> _s = {
   'not_understood': ['لم أفهم السؤال 🤔 جرّب صياغة أخرى أو اختر من القائمة','I didn’t get that 🤔 Try other words or pick from the list','Je n’ai pas compris 🤔 Reformule ou choisis dans la liste','No lo entendí 🤔 Prueba otras palabras o elige de la lista','Não entendi 🤔 Tente outras palavras ou escolha da lista'],
   'already_asked': ['سألت هذا السؤال من قبل ✓','You already asked that ✓','Déjà demandé ✓','Ya lo preguntaste ✓','Você já perguntou isso ✓'],
   'voice_unavailable': ['الإدخال الصوتي غير متوفر في هاتفك. ثبّت أو حدّث تطبيق Google من المتجر ثم جرّب مجدداً.','Voice input isn’t available. Install or update the Google app, then try again.','La saisie vocale n’est pas disponible. Installe ou mets à jour l’app Google.','La entrada de voz no está disponible. Instala o actualiza la app de Google.','A entrada de voz não está disponível. Instale ou atualize o app Google.'],
+  'voice_no_speech': ['لم أسمع شيئاً 🎤 اضغط على الميكروفون وتكلّم بوضوح','I didn’t hear anything 🎤 Tap the mic and speak clearly','Je n’ai rien entendu 🎤 Appuie sur le micro et parle','No escuché nada 🎤 Toca el micrófono y habla','Não ouvi nada 🎤 Toque no microfone e fale'],
+  'voice_network': ['التعرّف على الصوت يحتاج إلى الإنترنت 📶','Voice recognition needs internet 📶','La reconnaissance vocale nécessite internet 📶','El reconocimiento de voz necesita internet 📶','O reconhecimento de voz precisa de internet 📶'],
   'search_name': ['ابحث بالاسم…','Search by name…','Chercher un nom…','Buscar por nombre…','Buscar pelo nome…'],
   'friends': ['الأصدقاء', 'Friends', 'Amis', 'Amigos', 'Amigos'],
   'my_id': ['الـ ID الخاص بك', 'Your ID', 'Ton ID', 'Tu ID', 'Seu ID'],

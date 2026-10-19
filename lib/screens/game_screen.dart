@@ -493,7 +493,7 @@ class _GameScreenState extends State<GameScreen> {
     if (r == null || r == 'dup') {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(t(r == 'dup' ? 'already_asked' : 'not_understood'))));
+        ..showSnackBar(SnackBar(content: Text(r == 'dup' ? t('already_asked') : '${t('not_understood')}\n«$text»')));
     }
   }
 

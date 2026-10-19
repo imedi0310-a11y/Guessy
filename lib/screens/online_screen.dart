@@ -649,20 +649,31 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       ..showSnackBar(SnackBar(content: Text(s), duration: const Duration(seconds: 2)));
   }
 
+  void _onPartial() {
+    if (_listening && Voice.partial.value.isNotEmpty) _freeCtrl.text = Voice.partial.value;
+  }
+
   Future<void> _toggleListen() async {
-    if (_listening) return;
+    if (_listening) {
+      Voice.stop();
+      return;
+    }
     setState(() => _listening = true);
     Sfx.play('tap', haptic: true);
+    _freeCtrl.clear();
+    Voice.partial.addListener(_onPartial);
     try {
       final text = await Voice.listen();
       if (!mounted) return;
-      if (text != null && text.trim().isNotEmpty) {
-        _freeCtrl.text = text;
+      final heard = (text ?? '').trim().isNotEmpty ? text!.trim() : _freeCtrl.text.trim();
+      if (heard.isNotEmpty) {
+        _freeCtrl.text = heard;
         _sendFree();
       }
-    } catch (_) {
-      _snack(t('voice_unavailable'));
+    } catch (e) {
+      if (mounted) _snack(Voice.errorText(e));
     } finally {
+      Voice.partial.removeListener(_onPartial);
       if (mounted) setState(() => _listening = false);
     }
   }
