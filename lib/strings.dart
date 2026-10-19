@@ -109,6 +109,16 @@ const Map<String, List<String>> _s = {
   'new_round': ['جولة جديدة', 'New round', 'Nouvelle manche', 'Nueva ronda', 'Nova rodada'],
   'friend': ['صديقك', 'Your friend', 'Ton ami', 'Tu amigo', 'Seu amigo'],
   'type_msg': ['اكتب رسالة…', 'Type a message…', 'Écris un message…', 'Escribe un mensaje…', 'Escreva uma mensagem…'],
+  'sometimes': ['أحياناً', 'Sometimes', 'Parfois', 'A veces', 'Às vezes'],
+  'friend_asks': ['صديقك يسأل عن بطاقته (أنت تراها):', 'Your friend asks about their card (you see it):', 'Ton ami demande sur sa carte (tu la vois) :', 'Tu amigo pregunta por su carta (tú la ves):', 'Seu amigo pergunta sobre a carta dele (você vê):'],
+  'about_card': ['بطاقته:', 'Their card:', 'Sa carte :', 'Su carta:', 'Carta dele:'],
+  'waiting_answer': ['في انتظار جواب صديقك…', 'Waiting for your friend to answer…', 'En attente de la réponse…', 'Esperando la respuesta…', 'Aguardando a resposta…'],
+  'ask_free_hint': ['اكتب أي سؤال أو اضغط 🎤', 'Type any question or tap 🎤', 'Écris une question ou touche 🎤', 'Escribe una pregunta o toca 🎤', 'Escreva uma pergunta ou toque 🎤'],
+  'listening': ['أستمع… تكلّم الآن', 'Listening… speak now', 'J’écoute… parle', 'Escuchando… habla', 'Ouvindo… fale agora'],
+  'mic_denied': ['اسمح للتطبيق باستعمال الميكروفون من الإعدادات', 'Allow microphone access in settings', 'Autorise le micro dans les réglages', 'Permite el micrófono en ajustes', 'Permita o microfone nas configurações'],
+  'hold_to_talk': ['اضغط مطولاً على 🎤 وتكلّم، ثم اترك للإرسال', 'Hold 🎤 and talk, release to send', 'Maintiens 🎤 et parle, relâche pour envoyer', 'Mantén 🎤 y habla, suelta para enviar', 'Segure 🎤 e fale, solte para enviar'],
+  'voice_msg': ['رسالة صوتية', 'Voice message', 'Message vocal', 'Mensaje de voz', 'Mensagem de voz'],
+  'voice_sent': ['أُرسلت الرسالة الصوتية', 'Voice message sent', 'Message vocal envoyé', 'Mensaje de voz enviado', 'Mensagem de voz enviada'],
 };
 
 String t(String key) {

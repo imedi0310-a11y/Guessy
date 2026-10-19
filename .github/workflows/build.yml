@@ -30,7 +30,14 @@ jobs:
           flutter create . --platforms=android --org com.dzd --project-name guessy
           sed -i 's/android:label="guessy"/android:label="Guessy"/' android/app/src/main/AndroidManifest.xml
           sed -i 's#</application>#    <meta-data android:name="io.flutter.embedding.android.EnableImpeller" android:value="false" />\n    </application>#' android/app/src/main/AndroidManifest.xml
-          grep -n 'Impeller\|label' android/app/src/main/AndroidManifest.xml
+          M=android/app/src/main/AndroidManifest.xml
+          sed -i 's#<application#<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.RECORD_AUDIO"/>\n    <application#' $M
+          if grep -q '<queries>' $M; then
+            sed -i 's#<queries>#<queries>\n        <intent><action android:name="android.speech.RecognitionService" /></intent>#' $M
+          else
+            sed -i 's#</manifest>#    <queries><intent><action android:name="android.speech.RecognitionService" /></intent></queries>\n</manifest>#' $M
+          fi
+          cat $M
           cp ci/proguard-rules.pro android/app/proguard-rules.pro
           G=$(ls android/app/build.gradle*); echo $G
           sed -i 's/signingConfig = signingConfigs.getByName("debug")/signingConfig = signingConfigs.getByName("debug")\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")/' $G

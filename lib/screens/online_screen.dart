@@ -1,4 +1,9 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:record/record.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data.dart';
@@ -177,6 +182,14 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   Timer? _bubbleT;
   int _prevSecs = 99;
   bool _endSound = false;
+  int _answeredF = 0;
+  final _voicePlayer = AudioPlayer();
+  final _freeCtrl = TextEditingController();
+  final stt.SpeechToText _stt = stt.SpeechToText();
+  bool _listening = false;
+  final _rec = AudioRecorder();
+  bool _recording = false;
+  Timer? _recT;
 
   @override
   void initState() {
@@ -195,7 +208,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     }
     if (log.length > _logLen) {
       final e = log.last;
-      if (e.kind == 'q') {
+      if (e.kind == 'f') {
+        if (e.who != g.me) Sfx.play('pop', haptic: true);
+      } else if (e.kind == 'q') {
         Sfx.play(e.yes == true ? 'yes' : 'no');
       } else if (e.yes != true) {
         Sfx.play('wrong');
@@ -205,6 +220,22 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         if (_scroll.hasClients) {
           _scroll.animateTo(_scroll.position.maxScrollExtent, duration: const Duration(milliseconds: 300), curve: Curves.easeOut);
         }
+      });
+    }
+    final answered = log.where((e) => e.kind == 'f' && e.raw != null).toList();
+    if (answered.length > _answeredF) {
+      final a = answered.last;
+      if (a.who == g.me) Sfx.play(a.raw == 1 ? 'yes' : a.raw == 0 ? 'no' : 'magic');
+    }
+    _answeredF = answered.length;
+    final voice = g.lastVoice;
+    if (voice != null) {
+      g.lastVoice = null;
+      _voicePlayer.play(BytesSource(voice)).catchError((_) {});
+      _bubble = '🎙️ ${t('voice_msg')}';
+      _bubbleT?.cancel();
+      _bubbleT = Timer(const Duration(seconds: 4), () {
+        if (mounted) setState(() => _bubble = null);
       });
     }
     if (g.over != null && !_endSound) {
@@ -230,6 +261,10 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   @override
   void dispose() {
     g.removeListener(_onChange);
+    _voicePlayer.dispose();
+    _freeCtrl.dispose();
+    _recT?.cancel();
+    _rec.dispose();
     g.leave();
     g.dispose();
     _scroll.dispose();
@@ -275,6 +310,8 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             ),
           ),
           const SoundButton(),
+          const SizedBox(width: 8),
+          _pttButton(),
           const SizedBox(width: 8),
           GlassIconButton(icon: Icons.chat_bubble_rounded, onPressed: _openChat),
         ],
@@ -451,7 +488,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         final e = log[i];
         final mine = e.who == g.me;
         final ok = e.yes == true;
-        final badge = e.kind == 'q' ? (ok ? t('yes') : t('no')) : (ok ? '✓' : '✗');
+        final badge = e.kind == 'f'
+            ? (e.raw == null ? '⏳' : e.raw == 1 ? t('yes') : e.raw == 0 ? t('no') : t('sometimes'))
+            : e.kind == 'q'
+                ? (ok ? t('yes') : t('no'))
+                : (ok ? '✓' : '✗');
         return Align(
           alignment: mine ? AlignmentDirectional.centerStart : AlignmentDirectional.centerEnd,
           child: Container(
@@ -492,6 +533,35 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         const SizedBox(height: 14),
         LuxButton(label: t('new_round'), icon: '🔄', onPressed: () => g.newRound()),
       ]);
+    } else if (g.pendingFree != null) {
+      final p = g.pendingFree!;
+      if (p.who != g.me) {
+        child = Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          Text(t('friend_asks'), style: const TextStyle(color: C.muted, fontSize: 13)),
+          const SizedBox(height: 8),
+          Text(p.text ?? '', textAlign: TextAlign.center, style: const TextStyle(fontSize: 21, fontWeight: FontWeight.w900, height: 1.3)),
+          const SizedBox(height: 6),
+          Text('${t('about_card')} ${g.oppCard?.emoji ?? ''} ${g.oppCard?.name ?? ''}',
+              textAlign: TextAlign.center, style: const TextStyle(color: C.goldLight, fontSize: 13)),
+          const SizedBox(height: 12),
+          Row(children: [
+            Expanded(child: LuxButton(label: t('yes'), gradient: C.greenGrad, textColor: C.ink, height: 50, onPressed: () => g.answerFree(1))),
+            const SizedBox(width: 8),
+            Expanded(child: LuxButton(label: t('sometimes'), gradient: C.goldGrad, textColor: C.ink, height: 50, onPressed: () => g.answerFree(2))),
+            const SizedBox(width: 8),
+            Expanded(child: LuxButton(label: t('no'), gradient: C.roseGrad, textColor: Colors.white, height: 50, onPressed: () => g.answerFree(0))),
+          ]),
+        ]);
+      } else {
+        child = Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            Text('⏳ ${t('waiting_answer')}', style: const TextStyle(color: C.muted, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 12),
+            _quickChat(),
+          ]),
+        );
+      }
     } else if (!g.myTurn) {
       child = Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -504,6 +574,8 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     } else {
       final qs = g.unasked;
       child = Column(mainAxisSize: MainAxisSize.min, children: [
+        _freeRow(),
+        const SizedBox(height: 12),
         Row(children: [
           Container(width: 3, height: 16, decoration: BoxDecoration(gradient: C.goldGrad, borderRadius: BorderRadius.circular(3))),
           const SizedBox(width: 8),
@@ -539,6 +611,158 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         border: Border(top: BorderSide(color: C.gold.withValues(alpha: 0.30))),
       ),
       child: child,
+    );
+  }
+
+  String get _sttLocale => const {'ar': 'ar_SA', 'en': 'en_US', 'fr': 'fr_FR', 'es': 'es_ES', 'pt': 'pt_BR'}[Lang.code] ?? 'en_US';
+
+  void _snack(String s) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(s), duration: const Duration(seconds: 2)));
+  }
+
+  Future<void> _toggleListen() async {
+    if (_listening) {
+      await _stt.stop();
+      if (mounted) setState(() => _listening = false);
+      return;
+    }
+    try {
+      final ok = await _stt.initialize(
+        onError: (_) {
+          if (mounted) setState(() => _listening = false);
+        },
+        onStatus: (st) {
+          if ((st == 'done' || st == 'notListening') && mounted) setState(() => _listening = false);
+        },
+      );
+      if (!ok) {
+        _snack(t('mic_denied'));
+        return;
+      }
+      setState(() => _listening = true);
+      Sfx.play('tap', haptic: true);
+      await _stt.listen(
+        onResult: (r) {
+          if (mounted) setState(() => _freeCtrl.text = r.recognizedWords);
+        },
+        localeId: _sttLocale,
+        listenFor: const Duration(seconds: 12),
+        pauseFor: const Duration(seconds: 3),
+      );
+    } catch (_) {
+      if (mounted) setState(() => _listening = false);
+      _snack(t('mic_denied'));
+    }
+  }
+
+  void _sendFree() {
+    final q = _freeCtrl.text.trim();
+    if (q.isEmpty) return;
+    Sfx.play('tap', haptic: true);
+    g.askFree(q);
+    _freeCtrl.clear();
+    FocusScope.of(context).unfocus();
+  }
+
+  Widget _freeRow() {
+    return Row(children: [
+      Expanded(
+        child: TextField(
+          controller: _freeCtrl,
+          maxLength: 120,
+          textInputAction: TextInputAction.send,
+          onSubmitted: (_) => _sendFree(),
+          decoration: InputDecoration(
+            hintText: _listening ? t('listening') : t('ask_free_hint'),
+            counterText: '',
+            isDense: true,
+            filled: true,
+            fillColor: C.glass,
+            contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide(color: C.gold.withValues(alpha: 0.3))),
+            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: const BorderSide(color: C.gold)),
+          ),
+        ),
+      ),
+      const SizedBox(width: 8),
+      Material(
+        color: _listening ? C.pink : C.glass,
+        shape: CircleBorder(side: BorderSide(color: _listening ? C.pink : C.gold.withValues(alpha: 0.5))),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: _toggleListen,
+          child: SizedBox(width: 46, height: 46, child: Icon(_listening ? Icons.stop_rounded : Icons.mic_rounded, color: Colors.white)),
+        ),
+      ),
+      const SizedBox(width: 6),
+      Material(
+        shape: const CircleBorder(),
+        clipBehavior: Clip.antiAlias,
+        child: Ink(
+          decoration: const BoxDecoration(gradient: C.goldGrad, shape: BoxShape.circle),
+          child: InkWell(
+            onTap: _sendFree,
+            child: const SizedBox(width: 46, height: 46, child: Icon(Icons.send_rounded, color: C.ink)),
+          ),
+        ),
+      ),
+    ]);
+  }
+
+  Future<void> _startRec() async {
+    if (_recording) return;
+    try {
+      if (!await _rec.hasPermission()) {
+        _snack(t('mic_denied'));
+        return;
+      }
+      final dir = await getTemporaryDirectory();
+      await _rec.start(
+        const RecordConfig(encoder: AudioEncoder.aacLc, bitRate: 32000, sampleRate: 16000, numChannels: 1),
+        path: '${dir.path}/ptt.m4a',
+      );
+      Sfx.play('tap', haptic: true);
+      setState(() => _recording = true);
+      _recT?.cancel();
+      _recT = Timer(const Duration(seconds: 8), _stopRec);
+    } catch (_) {
+      _snack(t('mic_denied'));
+    }
+  }
+
+  Future<void> _stopRec() async {
+    if (!_recording) return;
+    _recT?.cancel();
+    setState(() => _recording = false);
+    try {
+      final path = await _rec.stop();
+      if (path == null) return;
+      final bytes = await File(path).readAsBytes();
+      if (bytes.length < 2000) return; // too short
+      await g.sendVoice(bytes);
+      _snack('🎙️ ${t('voice_sent')}');
+    } catch (_) {}
+  }
+
+  Widget _pttButton() {
+    return GestureDetector(
+      onLongPressStart: (_) => _startRec(),
+      onLongPressEnd: (_) => _stopRec(),
+      onTap: () => _snack(t('hold_to_talk')),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 150),
+        width: _recording ? 52 : 44,
+        height: _recording ? 52 : 44,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: _recording ? C.pink : C.glass,
+          border: Border.all(color: _recording ? C.pink : C.glassBorder),
+          boxShadow: _recording ? [BoxShadow(color: C.pink.withValues(alpha: 0.6), blurRadius: 18)] : null,
+        ),
+        child: const Icon(Icons.mic_rounded, size: 22, color: Colors.white),
+      ),
     );
   }
 

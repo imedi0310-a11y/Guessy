@@ -8,3 +8,6 @@
 -keep class io.flutter.plugins.firebase.** { *; }
 -keep class com.google.firebase.** { *; }
 -dontwarn com.google.firebase.**
+-keep class com.csdcorp.speech_to_text.** { *; }
+-keep class com.llfbandit.record.** { *; }
+-keep class io.flutter.plugins.pathprovider.** { *; }

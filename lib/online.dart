@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 import 'dart:io' show Platform;
 import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -99,12 +101,15 @@ class Online {
 }
 
 class OnlineEntry {
+  final String id;
   final String who; // 'h' | 'g'
-  final String kind; // 'q' | 'g'
+  final String kind; // 'q' ready question | 'g' guess | 'f' free question
   final String? key;
   final String? cardId;
-  final bool? yes; // answer for q, ok for g
-  OnlineEntry(this.who, this.kind, {this.key, this.cardId, this.yes});
+  final String? text; // free question text
+  final int? raw; // 1 yes, 0 no, 2 sometimes, null = not answered yet
+  bool? get yes => raw == null ? null : raw == 1;
+  OnlineEntry(this.id, this.who, this.kind, {this.key, this.cardId, this.text, this.raw});
 }
 
 class ChatMsg {
@@ -120,7 +125,9 @@ class OnlineGame extends ChangeNotifier {
   final String me;
   String get opp => me == 'h' ? 'g' : 'h';
   late final DatabaseReference ref = Online.db.ref('rooms/$code');
-  StreamSubscription<DatabaseEvent>? _sub, _chatSub, _offSub;
+  StreamSubscription<DatabaseEvent>? _sub, _chatSub, _offSub, _voiceSub;
+  Uint8List? lastVoice;
+  final int _joinedAt = DateTime.now().millisecondsSinceEpoch;
   Timer? _clock;
   int _offset = 0;
   Map<String, dynamic> room = {};
@@ -158,6 +165,16 @@ class OnlineGame extends ChangeNotifier {
       if (msg.who != me) lastIncoming = msg;
       _notify();
     });
+    _voiceSub = ref.child('voice').onChildAdded.listen((e) {
+      final m = _deepMap(e.snapshot.value);
+      if ('${m['who']}' == me) return;
+      final ts = m['ts'] is num ? (m['ts'] as num).toInt() : 0;
+      if (ts < _joinedAt - 60000 + _offset) return; // ignore old clips
+      try {
+        lastVoice = base64Decode('${m['a']}');
+        _notify();
+      } catch (_) {}
+    });
     _clock = Timer.periodic(const Duration(seconds: 1), (_) => _tick());
   }
 
@@ -193,7 +210,13 @@ class OnlineGame extends ChangeNotifier {
   CardItem? get oppCard => _card(opp);
   bool get ready => myCard != null && oppCard != null;
   String get turn => '${room['turn'] ?? 'h'}';
-  bool get myTurn => turn == me && over == null;
+  bool get myTurn => turn == me && over == null && pendingFree == null;
+  OnlineEntry? get pendingFree {
+    for (final e in log.reversed) {
+      if (e.kind == 'f' && e.raw == null) return e;
+    }
+    return null;
+  }
   int get turnAt => (room['turnAt'] is num) ? (room['turnAt'] as num).toInt() : now;
   int get secsLeft => max(0, turnSecs - ((now - turnAt) ~/ 1000));
   String? get over => room['over'] is Map ? '${room['over']['win']}' : null;
@@ -207,8 +230,11 @@ class OnlineGame extends ChangeNotifier {
     return [
       for (final k in keys)
         if (l[k] is Map)
-          OnlineEntry('${l[k]['w']}', '${l[k]['k']}',
-              key: l[k]['a'] as String?, cardId: l[k]['c'] as String?, yes: l[k]['y'] == 1 || l[k]['y'] == true),
+          OnlineEntry('$k', '${l[k]['w']}', '${l[k]['k']}',
+              key: l[k]['a'] as String?,
+              cardId: l[k]['c'] as String?,
+              text: l[k]['q'] as String?,
+              raw: l[k]['y'] is num ? (l[k]['y'] as num).toInt() : (l[k]['y'] == true ? 1 : null)),
     ];
   }
 
@@ -236,6 +262,7 @@ class OnlineGame extends ChangeNotifier {
   }
 
   String entryText(OnlineEntry e) {
+    if (e.kind == 'f') return e.text ?? '';
     if (e.kind == 'q') return cat.attr(e.key ?? '')?.text ?? '';
     final c = cardById(e.cardId);
     return '${t('is_it_pre')}${c?.name ?? '?'}${t('is_it_post')}';
@@ -291,12 +318,31 @@ class OnlineGame extends ChangeNotifier {
     }
   }
 
+  /// Ask any question (typed or spoken). The opponent answers it.
+  Future<void> askFree(String q) async {
+    q = q.trim();
+    if (!myTurn || q.isEmpty) return;
+    await ref.child('log').push().set({'w': me, 'k': 'f', 'q': q.length > 120 ? q.substring(0, 120) : q});
+  }
+
+  /// Answer the opponent's free question: 1 yes, 0 no, 2 sometimes. Then it's my turn.
+  Future<void> answerFree(int a) async {
+    final p = pendingFree;
+    if (p == null || p.who == me) return;
+    await ref.update({'log/${p.id}/y': a, 'turn': me, 'turnAt': ServerValue.timestamp});
+  }
+
+  Future<void> sendVoice(Uint8List bytes) async {
+    if (bytes.length > 200000) return;
+    await ref.child('voice').push().set({'who': me, 'a': base64Encode(bytes), 'ts': ServerValue.timestamp});
+  }
+
   Future<void> sendChat(String text) async {
     await ref.child('chat').push().set({'who': me, 't': text, 'ts': ServerValue.timestamp});
   }
 
   void _tick() {
-    if (!ready || over != null) return;
+    if (!ready || over != null || pendingFree != null) return;
     // If the opponent's clock ran out (e.g. they left the app), pass the turn back.
     if (turn == opp && now - turnAt > (turnSecs + 3) * 1000) {
       ref.update({'turn': me, 'turnAt': ServerValue.timestamp});
@@ -319,6 +365,7 @@ class OnlineGame extends ChangeNotifier {
     _sub?.cancel();
     _chatSub?.cancel();
     _offSub?.cancel();
+    _voiceSub?.cancel();
     _clock?.cancel();
     super.dispose();
   }
