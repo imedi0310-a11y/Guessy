@@ -73,6 +73,19 @@ void main() {
     expect(q('هل يعيش هذا الحيوان في البحر', animals), 's');
     expect(q('هل هذا الحيوان يطير', animals), 'fl');
     expect(q('هل لعب في الدوري', world), isNull); // too vague: which league?
+
+    final anime = GameData.cat('anime');
+    expect(anime.id, 'anime');
+    expect(q('هل هو من ناروتو', anime.attrs), 'naruto');
+    expect(q('هل هذه الشخصية من ون بيس', anime.attrs), 'op');
+    expect(q('واش يقاتل بالسيف', anime.attrs), 'sword');
+    expect(q('هل هو شرير', anime.attrs), 'villain');
+    List<String> n(String s) => matchCardNames(s, anime).map((c) => c.id).toList();
+    expect(n('هل هو من ناروتو'), isEmpty); // series question, not a guess
+    expect(n('هل هو من المحقق كونان'), isEmpty);
+    expect(n('هل هو ناروتو'), ['anime.naruto']);
+    expect(n('قوكو'), ['anime.goku']);
+    expect(n('لوفي'), ['anime.luffy']);
   });
 
   test('guess list search is forgiving', () {

@@ -49,6 +49,8 @@ for cat in cards['cats']:
         cid = f"{cat['id']}.{c['id']}"
         en = re.sub(r'\s*\(.*?\)\s*$', '', c['en']) if c['en'] not in OVR else c['en']
         title = OVR.get(c['en'], OVR.get(en, en))
+        if cat.get('noPhotos'):
+            continue
         if cat['id'] == 'countries':
             title = OVR.get(c['en'], c['en'])
         try:

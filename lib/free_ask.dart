@@ -179,7 +179,7 @@ String _skel(String w) {
   for (var i = 1; i < w.length; i++) {
     final ch = w[i];
     if ('aeiouyاويهءh'.contains(ch)) continue;
-    final n = ch == 'k' || ch == 'q' ? 'c' : (ch == 'z' ? 's' : (ch == 'ث' || ch == 'ص' ? 'س' : (ch == 'ق' ? 'ك' : ch)));
+    final n = ch == 'k' || ch == 'q' || ch == 'g' ? 'c' : (ch == 'z' ? 's' : (ch == 'ث' || ch == 'ص' ? 'س' : (ch == 'ق' || ch == 'غ' ? 'ك' : ch)));
     if (n == prev) continue;
     b.write(n);
     prev = n;
@@ -241,9 +241,24 @@ _NameIndex _index(Cat cat) => _catCache.putIfAbsent('${cat.id}:${cat.cards.lengt
 
 /// Cards whose name (in any language, or a nickname) the text refers to, best matches only.
 List<CardItem> matchCardNames(String text, Cat cat) {
+  final ix = _index(cat);
+  // "is he FROM Naruto / One Piece?" is a question about the series, not a guess:
+  // drop question words that come right after من / from / de ...
+  final kept = <String>[];
+  var afterFrom = false;
+  for (final w in normText(text).split(' ')) {
+    if (const {'من', 'فى', 'from', 'of', 'in', 'de', 'do', 'da', 'del', 'des', 'du', 'dans', 'en'}.contains(w)) {
+      afterFrom = true;
+      kept.add(w);
+      continue;
+    }
+    if (afterFrom && ix.questionWords.contains(_strip(w))) continue;
+    afterFrom = false;
+    kept.add(w);
+  }
+  text = kept.join(' ');
   final typed = _nameTokens(text);
   if (typed.isEmpty) return const [];
-  final ix = _index(cat);
   final n = ' ${normText(text)} ';
   var best = 0.0;
   var out = <CardItem>[];
