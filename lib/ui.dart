@@ -1,6 +1,5 @@
 import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'data.dart';
 import 'sfx.dart';
 import 'theme.dart';
@@ -291,20 +290,17 @@ class CardPic extends StatelessWidget {
       height: size,
       child: Center(child: Text(card.emoji, style: TextStyle(fontSize: size * 0.62, height: 1.1))),
     );
-    final url = card.img;
-    if (url == null || _isTest) return emoji;
+    final path = card.img;
+    if (path == null || _isTest) return emoji;
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius ?? size * 0.22),
-      child: CachedNetworkImage(
-        imageUrl: url,
+      child: Image.asset(
+        path,
         width: size,
         height: size,
         fit: BoxFit.cover,
         alignment: Alignment.topCenter,
-        httpHeaders: const {'User-Agent': 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy) Flutter'},
-        fadeInDuration: const Duration(milliseconds: 200),
-        placeholder: (_, __) => emoji,
-        errorWidget: (_, __, ___) => emoji,
+        errorBuilder: (_, __, ___) => emoji,
       ),
     );
   }

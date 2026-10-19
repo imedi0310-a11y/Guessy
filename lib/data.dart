@@ -72,7 +72,7 @@ class GameData {
       for (final c in cats) {
         for (final d in c.cards) {
           final u = m[d.id];
-          if (u is String && u.startsWith('https://')) d.img = u;
+          if (u is String && u.startsWith('assets/')) d.img = u;
         }
       }
     } catch (_) {}

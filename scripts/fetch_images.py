@@ -12,7 +12,7 @@ OVR = {
  'nurse':'Nurse','soldier':'Soldier','judge':'Judge','chef':'Chef','barber':'Barber','salad':'Salad','juice':'Juice',
  'Xavi Hernández':'Xavi','Luis de la Fuente':'Luis de la Fuente (footballer, born 1961)','Rodri':'Rodri (footballer, born 1996)',
  'Pedri':'Pedri','Elissa':'Elissa (singer)','Mohamed Fellag':'Fellag','Luis Enrique':'Luis Enrique (footballer)',
- 'Palestine':'State of Palestine','Neymar':'Neymar','Soolking':'Soolking',
+ 'Palestine':'State of Palestine','Neymar':'Neymar','Soolking':'Soolking','Mohamed Ramadan':'Mohamed Ramadan (actor)',
 }
 UA = 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy)'
 
@@ -21,6 +21,17 @@ def summary(title):
     req = urllib.request.Request(url, headers={'User-Agent': UA})
     with urllib.request.urlopen(req, timeout=20) as r:
         return json.load(r)
+
+def pageimage(title):
+    url = ('https://en.wikipedia.org/w/api.php?action=query&format=json&redirects=1&prop=pageimages&piprop=thumbnail'
+           '&pithumbsize=330&titles=' + urllib.parse.quote(title))
+    req = urllib.request.Request(url, headers={'User-Agent': UA})
+    with urllib.request.urlopen(req, timeout=20) as r:
+        pages = json.load(r).get('query', {}).get('pages', {})
+    for p in pages.values():
+        th = p.get('thumbnail', {}).get('source')
+        if th: return th
+    return None
 
 cards = json.load(open('assets/data/cards.json'))
 out, miss = {}, []
@@ -32,28 +43,50 @@ for cat in cards['cats']:
         if cat['id'] == 'countries':
             title = OVR.get(c['en'], c['en'])
         try:
-            s = summary(title)
-            if s.get('type') == 'disambiguation' or 'thumbnail' not in s:
+            src = None
+            try:
+                s = summary(title)
+                if s.get('type') != 'disambiguation':
+                    src = s.get('thumbnail', {}).get('source')
+            except Exception:
+                pass
+            if not src:
+                src = pageimage(title)
+            if not src and cat['people']:
+                for extra in [' (footballer)', ' (singer)', ' (actor)', ' (athlete)']:
+                    src = pageimage(title + extra)
+                    if src: break
+            if not src:
                 miss.append(f'{cid}={title}'); continue
-            src = s['thumbnail']['source']
             out[cid] = src
         except Exception as e:
             miss.append(f'{cid}={title} ({e.__class__.__name__})')
         time.sleep(0.05)
+# Download + shrink every photo into the app (works offline, no hotlinking problems)
+import io, os
+from PIL import Image
+os.makedirs('assets/photos', exist_ok=True)
+bundled = {}
+for cid, u in out.items():
+    try:
+        req = urllib.request.Request(u, headers={'User-Agent': UA})
+        with urllib.request.urlopen(req, timeout=30) as r:
+            data = r.read()
+        im = Image.open(io.BytesIO(data)).convert('RGB')
+        w, h = im.size
+        side = min(w, h)
+        top = 0 if h > w else (h - side) // 2  # keep faces (top) for portraits
+        left = (w - side) // 2
+        im = im.crop((left, top, left + side, top + side)).resize((256, 256), Image.LANCZOS)
+        path = 'assets/photos/' + cid.replace('.', '__') + '.jpg'
+        im.save(path, 'JPEG', quality=82, optimize=True)
+        bundled[cid] = path
+    except Exception as e:
+        miss.append(f'{cid} download {getattr(e, "code", e.__class__.__name__)}')
+    time.sleep(0.03)
+out = bundled
 json.dump(out, open('assets/data/images.json', 'w'), ensure_ascii=False, indent=0)
 print(f'images: {len(out)} found, {len(miss)} missing')
 if miss:
     print('::notice title=missing images::' + ' | '.join(miss)[:3000])
 
-# sanity check: can the photos actually be downloaded?
-codes = []
-for cid in ['players.mbappe', 'animals.lion', 'food.pizza']:
-    u = out.get(cid)
-    if not u: continue
-    try:
-        req = urllib.request.Request(u, headers={'User-Agent': 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy) Flutter'})
-        with urllib.request.urlopen(req, timeout=20) as r:
-            codes.append(f'{cid}:{r.status}')
-    except Exception as e:
-        codes.append(f'{cid}:{getattr(e, "code", e.__class__.__name__)}')
-print('::notice title=photo check::' + ' '.join(codes) + ' sample=' + str(out.get('players.mbappe')))

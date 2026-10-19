@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'sfx.dart';
 import 'strings.dart';
 import 'theme.dart';
+import 'voice.dart';
 
 /// Text field + microphone (speech to text) + send button for free questions.
 class FreeAskBar extends StatefulWidget {
@@ -15,51 +15,29 @@ class FreeAskBar extends StatefulWidget {
 
 class _FreeAskBarState extends State<FreeAskBar> {
   final _ctrl = TextEditingController();
-  final stt.SpeechToText _stt = stt.SpeechToText();
   bool _listening = false;
-
-  String get _locale => const {'ar': 'ar_SA', 'en': 'en_US', 'fr': 'fr_FR', 'es': 'es_ES', 'pt': 'pt_BR'}[Lang.code] ?? 'en_US';
 
   void _snack(String s) {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(s), duration: const Duration(seconds: 2)));
+      ..showSnackBar(SnackBar(content: Text(s), duration: const Duration(seconds: 3)));
   }
 
   Future<void> _toggle() async {
-    if (_listening) {
-      await _stt.stop();
-      if (mounted) setState(() => _listening = false);
-      return;
-    }
+    if (_listening) return;
+    setState(() => _listening = true);
+    Sfx.play('tap', haptic: true);
     try {
-      final ok = await _stt.initialize(
-        onError: (_) {
-          if (mounted) setState(() => _listening = false);
-        },
-        onStatus: (st) {
-          if ((st == 'done' || st == 'notListening') && mounted) setState(() => _listening = false);
-        },
-      );
-      if (!ok) {
-        _snack(t('mic_denied'));
-        return;
+      final text = await Voice.listen();
+      if (!mounted) return;
+      if (text != null && text.trim().isNotEmpty) {
+        _ctrl.text = text;
+        _send();
       }
-      setState(() => _listening = true);
-      Sfx.play('tap', haptic: true);
-      await _stt.listen(
-        onResult: (r) {
-          if (!mounted) return;
-          setState(() => _ctrl.text = r.recognizedWords);
-          if (r.finalResult && r.recognizedWords.trim().isNotEmpty) _send();
-        },
-        localeId: _locale,
-        listenFor: const Duration(seconds: 12),
-        pauseFor: const Duration(seconds: 3),
-      );
-    } catch (_) {
+    } catch (e) {
+      _snack(t('voice_unavailable'));
+    } finally {
       if (mounted) setState(() => _listening = false);
-      _snack(t('mic_denied'));
     }
   }
 
@@ -74,7 +52,6 @@ class _FreeAskBarState extends State<FreeAskBar> {
   @override
   void dispose() {
     _ctrl.dispose();
-    _stt.cancel();
     super.dispose();
   }
 

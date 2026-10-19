@@ -39,6 +39,8 @@ jobs:
           fi
           cat $M
           cp ci/proguard-rules.pro android/app/proguard-rules.pro
+          MA=$(find android/app/src/main -name MainActivity.kt | head -1); echo $MA
+          cp ci/kotlin/MainActivity.kt $MA
           G=$(ls android/app/build.gradle*); echo $G
           sed -i 's/signingConfig = signingConfigs.getByName("debug")/signingConfig = signingConfigs.getByName("debug")\n            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")/' $G
           grep -n -A3 'release {' $G
@@ -52,7 +54,10 @@ jobs:
           ls -la assets/fonts
 
       - name: Fetch card photos (Wikipedia)
-        run: python3 scripts/fetch_images.py || echo '{}' > assets/data/images.json
+        run: |
+          pip install --quiet pillow
+          python3 scripts/fetch_images.py || echo '{}' > assets/data/images.json
+          du -sh assets/photos; ls assets/photos | wc -l
 
       - name: Get packages + app icon
         run: |

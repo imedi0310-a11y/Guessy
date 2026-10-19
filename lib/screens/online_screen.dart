@@ -3,11 +3,11 @@ import 'dart:io';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
-import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data.dart';
 import '../online.dart';
+import '../voice.dart';
 import '../social.dart';
 import '../invite.dart';
 import '../prefs.dart';
@@ -189,7 +189,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   String? _rrBy;
   final _voicePlayer = AudioPlayer();
   final _freeCtrl = TextEditingController();
-  final stt.SpeechToText _stt = stt.SpeechToText();
   bool _listening = false;
   final _rec = AudioRecorder();
   bool _recording = false;
@@ -642,7 +641,6 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     );
   }
 
-  String get _sttLocale => const {'ar': 'ar_SA', 'en': 'en_US', 'fr': 'fr_FR', 'es': 'es_ES', 'pt': 'pt_BR'}[Lang.code] ?? 'en_US';
 
   void _snack(String s) {
     ScaffoldMessenger.of(context)
@@ -651,37 +649,20 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
   }
 
   Future<void> _toggleListen() async {
-    if (_listening) {
-      await _stt.stop();
-      if (mounted) setState(() => _listening = false);
-      return;
-    }
+    if (_listening) return;
+    setState(() => _listening = true);
+    Sfx.play('tap', haptic: true);
     try {
-      final ok = await _stt.initialize(
-        onError: (_) {
-          if (mounted) setState(() => _listening = false);
-        },
-        onStatus: (st) {
-          if ((st == 'done' || st == 'notListening') && mounted) setState(() => _listening = false);
-        },
-      );
-      if (!ok) {
-        _snack(t('mic_denied'));
-        return;
+      final text = await Voice.listen();
+      if (!mounted) return;
+      if (text != null && text.trim().isNotEmpty) {
+        _freeCtrl.text = text;
+        _sendFree();
       }
-      setState(() => _listening = true);
-      Sfx.play('tap', haptic: true);
-      await _stt.listen(
-        onResult: (r) {
-          if (mounted) setState(() => _freeCtrl.text = r.recognizedWords);
-        },
-        localeId: _sttLocale,
-        listenFor: const Duration(seconds: 12),
-        pauseFor: const Duration(seconds: 3),
-      );
     } catch (_) {
+      _snack(t('voice_unavailable'));
+    } finally {
       if (mounted) setState(() => _listening = false);
-      _snack(t('mic_denied'));
     }
   }
 
