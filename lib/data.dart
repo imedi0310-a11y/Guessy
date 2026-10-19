@@ -15,7 +15,8 @@ class CardItem {
   final String en;
   final Map<String, dynamic> names;
   final Set<String> flags;
-  String? img; // free photo URL (Wikimedia), may be null
+  String? img; // bundled photo asset path, may be null
+  List<String> alias = const []; // other names people use (nicknames, spellings)
   CardItem(this.id, this.emoji, this.en, this.names, this.flags);
   String get name => loc(names);
 }
@@ -57,7 +58,7 @@ class GameData {
           dm['en'] as String,
           Map<String, dynamic>.from(dm['name'] as Map),
           (dm['flags'] as List).map((e) => e.toString()).toSet(),
-        );
+        )..alias = ((dm['aliases'] as List?) ?? const []).map((e) => '$e').toList();
       }).toList();
       return Cat(m['id'] as String, m['icon'] as String, Map<String, dynamic>.from(m['label'] as Map),
           m['people'] == true, attrs, cards);
@@ -82,6 +83,7 @@ class GameData {
             Map<String, dynamic>.from(dm['name'] as Map), (dm['flags'] as List).map((e) => '$e').toSet());
         final img = dm['img'];
         if (img is String && img.startsWith('assets/')) c.img = img;
+        c.alias = ((dm['aliases'] as List?) ?? const []).map((e) => '$e').toList();
         return c;
       }).toList();
       final cat = Cat('world', '${meta['icon']}', Map<String, dynamic>.from(meta['label'] as Map), true, attrs, cards);

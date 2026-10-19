@@ -7,8 +7,9 @@ import io, json, os, sys, time, urllib.parse, urllib.request, urllib.error
 
 UA = 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy)'
 EP = 'https://query.wikidata.org/sparql'
-LIMIT = int(os.environ.get('WORLD_LIMIT', '600'))
-MIN_SITELINKS = int(os.environ.get('WORLD_MIN_SL', '40'))
+LIMIT = int(os.environ.get('WORLD_LIMIT', '1000'))  # cards wanted
+FETCH = LIMIT + 450  # some get filtered out (no position, not really footballers...)
+MIN_SITELINKS = int(os.environ.get('WORLD_MIN_SL', '15'))
 
 
 def sparql(q, tries=5):
@@ -33,14 +34,14 @@ rows = sparql(f'''
 SELECT ?p ?sl WHERE {{
   ?p wdt:P106 wd:Q937857 ; wikibase:sitelinks ?sl .
   FILTER(?sl >= {MIN_SITELINKS})
-}} ORDER BY DESC(?sl) LIMIT {LIMIT}''')
+}} ORDER BY DESC(?sl) LIMIT {FETCH}''')
 ids = [qid(r['p']['value']) for r in rows]
 print('players:', len(ids))
 if len(ids) < 50:
     raise SystemExit('too few players')
 
 P = {i: {'names': {}, 'countries': set(), 'continents': set(), 'iso': None, 'pos': set(), 'teams': set(),
-         'leagues': set(), 'awards': set(), 'born': None, 'dead': False, 'img': None} for i in ids}
+         'leagues': set(), 'awards': set(), 'born': None, 'dead': False, 'img': None, 'alias': []} for i in ids}
 
 LEAGUE_IDS = {'Q9448': 'prem', 'Q324867': 'liga', 'Q15804': 'seriea', 'Q82595': 'bundes', 'Q13394': 'ligue1'}
 LEAGUES = {'Premier League': 'prem', 'La Liga': 'liga', 'LaLiga': 'liga', 'Saudi Professional League': 'saudi', 'Serie A': 'seriea', 'Bundesliga': 'bundes',
@@ -60,6 +61,13 @@ for k in range(0, len(ids), 80):
     for r in sparql(f'''SELECT ?p ?l WHERE {{ VALUES ?p {{ {vals} }} ?p rdfs:label ?l .
         FILTER(LANG(?l) IN ("ar","en","fr","es","pt")) }}'''):
         P[qid(r['p']['value'])]['names'][r['l']['xml:lang']] = r['l']['value']
+    # nicknames / other spellings (Vini Jr., CR7, ...)
+    for r in sparql(f'''SELECT ?p ?a WHERE {{ VALUES ?p {{ {vals} }} ?p skos:altLabel ?a .
+        FILTER(LANG(?a) IN ("ar","en","fr","es","pt")) }}'''):
+        al = P[qid(r['p']['value'])]['alias']
+        v = r['a']['value']
+        if len(v) <= 40 and v not in al and len(al) < 10:
+            al.append(v)
     # birth / death / image
     for r in sparql(f'''SELECT ?p ?b ?d ?img WHERE {{ VALUES ?p {{ {vals} }}
         OPTIONAL {{ ?p wdt:P569 ?b }} OPTIONAL {{ ?p wdt:P570 ?d }} OPTIONAL {{ ?p wdt:P18 ?img }} }}'''):
@@ -164,7 +172,9 @@ for i in ids:
             f.add(CLUBS[t])
     names = {l: n.get(l) or n['en'] for l in ('ar', 'en', 'fr', 'es', 'pt')}
     cards.append({'id': i, 'emoji': flag_emoji(e['iso'], main), 'en': n['en'], 'name': names,
-                  'flags': sorted(f), 'aliases': [], 'img_src': x['img']})
+                  'flags': sorted(f), 'aliases': x['alias'], 'img_src': x['img']})
+    if len(cards) >= LIMIT:
+        break
 
 print('cards:', len(cards))
 
@@ -190,7 +200,7 @@ for c in cards:
             left = (w - side) // 2
             im = im.crop((left, top, left + side, top + side)).resize((256, 256), Image.LANCZOS)
             path = f'assets/photos/world__{c["id"]}.jpg'
-            im.save(path, 'JPEG', quality=80, optimize=True)
+            im.save(path, 'JPEG', quality=74, optimize=True)
             c['img'] = path
             got += 1
             break

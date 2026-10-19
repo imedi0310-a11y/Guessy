@@ -134,24 +134,20 @@ class GameController extends ChangeNotifier {
   }
 
   /// Understands a typed/spoken question: returns 'q' (asked), 'g' (guessed) or null (not understood).
+  /// When a typed name fits several cards (e.g. two players called Ronaldo).
+  List<CardItem> candidates = const [];
+
   String? askFree(String text) {
     if (!canAct) return null;
-    final n = normText(text);
-    // A card name in the question = a guess ("is it Mbappé?")
-    CardItem? named;
-    for (final c in cat.cards) {
-      for (final v in c.names.values) {
-        final nm = normText('$v');
-        if (nm.length >= 3 && (n == nm || n.contains(nm) || n.endsWith(' $nm'))) {
-          if (named == null || nm.length > normText(named.name).length) named = c;
-        }
-      }
-      final en = normText(c.en.replaceAll(RegExp(r'\s*\(.*\)'), ''));
-      if (en.length >= 3 && n.contains(en)) named ??= c;
-    }
-    if (named != null && !myWrong.contains(named.id)) {
-      guess(named);
+    // A card name in the question = a guess ("is it Mbappé?"), spelling mistakes allowed
+    final named = matchCardNames(text, cat).where((c) => !myWrong.contains(c.id) && !removed.contains(c.id)).toList();
+    if (named.length == 1) {
+      guess(named.first);
       return 'g';
+    }
+    if (named.length > 1) {
+      candidates = named;
+      return 'amb';
     }
     Attr? best;
     var bestScore = 0.0;

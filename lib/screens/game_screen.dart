@@ -486,6 +486,10 @@ class _GameScreenState extends State<GameScreen> {
 
   void _freeAsk(String text) {
     final r = g.askFree(text);
+    if (r == 'amb') {
+      _openDeck(only: g.candidates);
+      return;
+    }
     if (r == null || r == 'dup') {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
@@ -562,7 +566,7 @@ class _GameScreenState extends State<GameScreen> {
           gradient: C.roseGrad,
           textColor: Colors.white,
           height: 50,
-          onPressed: _openDeck,
+          onPressed: () => _openDeck(),
         ),
       ],
     );
@@ -671,7 +675,7 @@ class _GameScreenState extends State<GameScreen> {
   }
 
   // ---------------- deck ----------------
-  void _openDeck() {
+  void _openDeck({List<CardItem>? only}) {
     Sfx.play('tap');
     showModalBottomSheet(
       context: context,
@@ -680,8 +684,8 @@ class _GameScreenState extends State<GameScreen> {
         var query = '';
         return StatefulBuilder(builder: (c, setS) {
         final qn = normText(query);
-        final cards = widget.cat.cards
-            .where((d) => qn.isEmpty || d.names.values.any((v) => normText('$v').contains(qn)))
+        final cards = (only ?? widget.cat.cards)
+            .where((d) => qn.isEmpty || nameMatchesQuery(d, query))
             .toList()
           ..sort((a, b) => (g.consistent(a) ? 0 : 1) - (g.consistent(b) ? 0 : 1));
         return SafeArea(

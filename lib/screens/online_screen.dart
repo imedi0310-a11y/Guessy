@@ -8,7 +8,7 @@ import 'package:flutter/services.dart';
 import '../data.dart';
 import '../online.dart';
 import '../voice.dart';
-import '../free_ask.dart' show normText;
+import '../free_ask.dart' show normText, nameMatchesQuery;
 import '../social.dart';
 import '../invite.dart';
 import '../prefs.dart';
@@ -863,7 +863,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
         return StatefulBuilder(builder: (c, setS) {
         final qn = normText(query);
         final list = g.cat.cards
-            .where((d) => qn.isEmpty || d.names.values.any((v) => normText('$v').contains(qn)))
+            .where((d) => qn.isEmpty || nameMatchesQuery(d, query))
             .toList()
           ..sort((a, b) => (g.consistent(a) ? 0 : 1) - (g.consistent(b) ? 0 : 1));
         return SafeArea(
