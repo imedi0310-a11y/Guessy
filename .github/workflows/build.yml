@@ -86,7 +86,8 @@ jobs:
         with:
           tag_name: build-${{ github.run_number }}
           name: Guessy build ${{ github.run_number }}
-          prerelease: true
+          prerelease: false
+          make_latest: true
           files: |
             Guessy.apk
             Guessy-old-phones.apk

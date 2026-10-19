@@ -11,3 +11,4 @@
 -keep class com.csdcorp.speech_to_text.** { *; }
 -keep class com.llfbandit.record.** { *; }
 -keep class io.flutter.plugins.pathprovider.** { *; }
+-keep class dev.fluttercommunity.plus.share.** { *; }

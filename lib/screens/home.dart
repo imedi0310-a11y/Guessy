@@ -8,6 +8,7 @@ import '../theme.dart';
 import '../ui.dart';
 import 'game_screen.dart';
 import 'online_screen.dart';
+import '../invite.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -112,6 +113,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: dailyDone == null ? _playDaily : null,
               ),
               const SizedBox(height: 26),
+              GlassButton(icon: '📤', label: t('invite_friends'), color: Colors.white, onPressed: () => shareInvite()),
+              const SizedBox(height: 18),
               Text(t('coming2'), textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 13, height: 1.5)),
             ],
           ),

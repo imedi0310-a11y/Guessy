@@ -119,6 +119,11 @@ const Map<String, List<String>> _s = {
   'hold_to_talk': ['اضغط مطولاً على 🎤 وتكلّم، ثم اترك للإرسال', 'Hold 🎤 and talk, release to send', 'Maintiens 🎤 et parle, relâche pour envoyer', 'Mantén 🎤 y habla, suelta para enviar', 'Segure 🎤 e fale, solte para enviar'],
   'voice_msg': ['رسالة صوتية', 'Voice message', 'Message vocal', 'Mensaje de voz', 'Mensagem de voz'],
   'voice_sent': ['أُرسلت الرسالة الصوتية', 'Voice message sent', 'Message vocal envoyé', 'Mensaje de voz enviado', 'Mensagem de voz enviada'],
+  'invite_friend': ['ادعُ صديقك', 'Invite a friend', 'Inviter un ami', 'Invitar a un amigo', 'Convidar um amigo'],
+  'invite_friends': ['ادعُ أصدقاءك إلى Guessy', 'Invite friends to Guessy', 'Invite tes amis sur Guessy', 'Invita a tus amigos a Guessy', 'Convide amigos para o Guessy'],
+  'invite_room_msg': ['🎮 تعال العب معي Guessy! خمّن البطاقة التي على رأسك 🤔\nرمز الغرفة:', '🎮 Come play Guessy with me! Guess the card on your head 🤔\nRoom code:', '🎮 Viens jouer à Guessy avec moi ! Devine la carte sur ta tête 🤔\nCode de la salle :', '🎮 ¡Ven a jugar Guessy conmigo! Adivina la carta en tu cabeza 🤔\nCódigo de sala:', '🎮 Venha jogar Guessy comigo! Adivinhe a carta na sua cabeça 🤔\nCódigo da sala:'],
+  'invite_dl': ['حمّل اللعبة من هنا:', 'Download the game:', 'Télécharge le jeu :', 'Descarga el juego:', 'Baixe o jogo:'],
+  'invite_app_msg': ['🎮 جرّب Guessy: لعبة خمّن البطاقة التي على رأسك 🤔 العب ضد الذكاء الاصطناعي أو مع أصدقائك أونلاين! حمّلها من هنا:', '🎮 Try Guessy: guess the card on your head 🤔 Play vs AI or with friends online! Download:', '🎮 Essaie Guessy : devine la carte sur ta tête 🤔 Joue contre l’IA ou avec tes amis ! Télécharge :', '🎮 Prueba Guessy: adivina la carta en tu cabeza 🤔 ¡Juega contra la IA o con amigos! Descarga:', '🎮 Experimente Guessy: adivinhe a carta na sua cabeça 🤔 Jogue contra a IA ou com amigos! Baixe:'],
 };
 
 String t(String key) {

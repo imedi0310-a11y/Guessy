@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../data.dart';
 import '../online.dart';
+import '../invite.dart';
 import '../prefs.dart';
 import '../sfx.dart';
 import '../strings.dart';
@@ -345,6 +346,11 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(t('copied'))));
                 },
               ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: 260,
+              child: LuxButton(label: t('invite_friend'), icon: '📤', height: 50, onPressed: () => shareInvite(code: widget.code)),
             ),
             const SizedBox(height: 30),
             const SizedBox(width: 26, height: 26, child: CircularProgressIndicator(strokeWidth: 2.5, color: C.gold)),
