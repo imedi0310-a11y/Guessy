@@ -677,7 +677,13 @@ class _GameScreenState extends State<GameScreen> {
       context: context,
       isScrollControlled: true,
       builder: (c) {
-        final cards = widget.cat.cards;
+        var query = '';
+        return StatefulBuilder(builder: (c, setS) {
+        final qn = normText(query);
+        final cards = widget.cat.cards
+            .where((d) => qn.isEmpty || d.names.values.any((v) => normText('$v').contains(qn)))
+            .toList()
+          ..sort((a, b) => (g.consistent(a) ? 0 : 1) - (g.consistent(b) ? 0 : 1));
         return SafeArea(
           child: SizedBox(
             height: MediaQuery.of(c).size.height * 0.78,
@@ -686,6 +692,20 @@ class _GameScreenState extends State<GameScreen> {
                 Text(t('tap_to_guess'), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
                 const SizedBox(height: 2),
                 Text('${g.possible.length} ${t('cards_left')}', style: const TextStyle(color: C.gold, fontSize: 13)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 6, 14, 0),
+                  child: TextField(
+                    onChanged: (v) => setS(() => query = v),
+                    decoration: InputDecoration(
+                      hintText: t('search_name'),
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      isDense: true,
+                      filled: true,
+                      fillColor: C.glass,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                    ),
+                  ),
+                ),
                 const SizedBox(height: 8),
                 Expanded(
                   child: GridView.builder(
@@ -741,6 +761,7 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
         );
+        });
       },
     );
   }

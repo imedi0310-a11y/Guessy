@@ -57,6 +57,7 @@ jobs:
         run: |
           pip install --quiet pillow
           python3 scripts/fetch_images.py || echo '{}' > assets/data/images.json
+          python3 scripts/build_world_players.py || echo '::warning::world players failed'
           du -sh assets/photos; ls assets/photos | wc -l
 
       - name: Get packages + app icon

@@ -29,7 +29,7 @@ void main() {
     }
     await tester.pumpAndSettle();
     expect(find.text('Guessy'), findsWidgets);
-    expect(GameData.cats.length, 8);
+    expect(GameData.cats.length, greaterThanOrEqualTo(8));
 
     for (final l in langs) {
       langNotifier.value = l;

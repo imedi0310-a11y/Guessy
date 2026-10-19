@@ -63,6 +63,31 @@ class GameData {
           m['people'] == true, attrs, cards);
     }).toList();
     await _loadImages();
+    await _loadWorld();
+  }
+
+  /// Optional big category built from Wikidata in CI (assets/data/world.json).
+  static Future<void> _loadWorld() async {
+    try {
+      final meta = jsonDecode(await rootBundle.loadString('assets/data/world_meta.json')) as Map<String, dynamic>;
+      final data = jsonDecode(await rootBundle.loadString('assets/data/world.json')) as Map<String, dynamic>;
+      final list = (data['cards'] as List?) ?? [];
+      if (list.length < 30) return;
+      final attrs = (meta['attrs'] as List)
+          .map((a) => Attr(a['key'] as String, Map<String, dynamic>.from(a['q'] as Map)))
+          .toList();
+      final cards = list.map((d) {
+        final dm = d as Map<String, dynamic>;
+        final c = CardItem('world.${dm['id']}', '${dm['emoji']}', '${dm['en']}',
+            Map<String, dynamic>.from(dm['name'] as Map), (dm['flags'] as List).map((e) => '$e').toSet());
+        final img = dm['img'];
+        if (img is String && img.startsWith('assets/')) c.img = img;
+        return c;
+      }).toList();
+      final cat = Cat('world', '${meta['icon']}', Map<String, dynamic>.from(meta['label'] as Map), true, attrs, cards);
+      final at = cats.indexWhere((c) => c.id == 'players');
+      cats.insert(at < 0 ? cats.length : at + 1, cat);
+    } catch (_) {}
   }
 
   static Future<void> _loadImages() async {

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import '../data.dart';
 import '../online.dart';
 import '../voice.dart';
+import '../free_ask.dart' show normText;
 import '../social.dart';
 import '../invite.dart';
 import '../prefs.dart';
@@ -857,20 +858,42 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      builder: (c) => SafeArea(
+      builder: (c) {
+        var query = '';
+        return StatefulBuilder(builder: (c, setS) {
+        final qn = normText(query);
+        final list = g.cat.cards
+            .where((d) => qn.isEmpty || d.names.values.any((v) => normText('$v').contains(qn)))
+            .toList()
+          ..sort((a, b) => (g.consistent(a) ? 0 : 1) - (g.consistent(b) ? 0 : 1));
+        return SafeArea(
         child: SizedBox(
           height: MediaQuery.of(c).size.height * 0.78,
           child: Column(children: [
             Text(t('tap_to_guess'), style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(14, 6, 14, 0),
+                  child: TextField(
+                    onChanged: (v) => setS(() => query = v),
+                    decoration: InputDecoration(
+                      hintText: t('search_name'),
+                      prefixIcon: const Icon(Icons.search_rounded),
+                      isDense: true,
+                      filled: true,
+                      fillColor: C.glass,
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+                    ),
+                  ),
+                ),
             const SizedBox(height: 8),
             Expanded(
               child: GridView.builder(
                 padding: const EdgeInsets.fromLTRB(14, 6, 14, 14),
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4, mainAxisSpacing: 10, crossAxisSpacing: 10, childAspectRatio: 0.78),
-                itemCount: g.cat.cards.length,
+                itemCount: list.length,
                 itemBuilder: (_, i) {
-                  final d = g.cat.cards[i];
+                  final d = list[i];
                   final ok = g.consistent(d);
                   final gone = g.myWrong.contains(d.id);
                   return Opacity(
@@ -906,7 +929,9 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
             ),
           ]),
         ),
-      ),
+      );
+        });
+      },
     );
   }
 }

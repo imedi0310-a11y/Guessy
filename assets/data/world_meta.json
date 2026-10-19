@@ -1,0 +1,443 @@
+{
+"id": "world",
+"icon": "🏟️",
+"label": {
+"ar": "لاعبو العالم",
+"en": "World players",
+"fr": "Joueurs du monde",
+"es": "Jugadores del mundo",
+"pt": "Jogadores do mundo"
+},
+"attrs": [
+{
+"key": "arab",
+"q": {
+"ar": "هل هو لاعب عربي؟",
+"en": "Is he an Arab player?",
+"fr": "Est-il un joueur arabe ?",
+"es": "¿Es un jugador árabe?",
+"pt": "Ele é um jogador árabe?"
+}
+},
+{
+"key": "alg",
+"q": {
+"ar": "هل هو جزائري؟",
+"en": "Is he Algerian?",
+"fr": "Est-il algérien ?",
+"es": "¿Es argelino?",
+"pt": "Ele é argelino?"
+}
+},
+{
+"key": "mar",
+"q": {
+"ar": "هل هو مغربي؟",
+"en": "Is he Moroccan?",
+"fr": "Est-il marocain ?",
+"es": "¿Es marroquí?",
+"pt": "Ele é marroquino?"
+}
+},
+{
+"key": "egy",
+"q": {
+"ar": "هل هو مصري؟",
+"en": "Is he Egyptian?",
+"fr": "Est-il égyptien ?",
+"es": "¿Es egipcio?",
+"pt": "Ele é egípcio?"
+}
+},
+{
+"key": "afr",
+"q": {
+"ar": "هل هو من أفريقيا؟",
+"en": "Is he from Africa?",
+"fr": "Vient-il d’Afrique ?",
+"es": "¿Es de África?",
+"pt": "Ele é da África?"
+}
+},
+{
+"key": "eur",
+"q": {
+"ar": "هل هو أوروبي؟",
+"en": "Is he European?",
+"fr": "Est-il européen ?",
+"es": "¿Es europeo?",
+"pt": "Ele é europeu?"
+}
+},
+{
+"key": "sam",
+"q": {
+"ar": "هل هو من أمريكا الجنوبية؟",
+"en": "Is he from South America?",
+"fr": "Vient-il d’Amérique du Sud ?",
+"es": "¿Es de Sudamérica?",
+"pt": "Ele é da América do Sul?"
+}
+},
+{
+"key": "bra",
+"q": {
+"ar": "هل هو برازيلي؟",
+"en": "Is he Brazilian?",
+"fr": "Est-il brésilien ?",
+"es": "¿Es brasileño?",
+"pt": "Ele é brasileiro?"
+}
+},
+{
+"key": "arg",
+"q": {
+"ar": "هل هو أرجنتيني؟",
+"en": "Is he Argentine?",
+"fr": "Est-il argentin ?",
+"es": "¿Es argentino?",
+"pt": "Ele é argentino?"
+}
+},
+{
+"key": "fra",
+"q": {
+"ar": "هل هو فرنسي؟",
+"en": "Is he French?",
+"fr": "Est-il français ?",
+"es": "¿Es francés?",
+"pt": "Ele é francês?"
+}
+},
+{
+"key": "esp",
+"q": {
+"ar": "هل هو إسباني؟",
+"en": "Is he Spanish?",
+"fr": "Est-il espagnol ?",
+"es": "¿Es español?",
+"pt": "Ele é espanhol?"
+}
+},
+{
+"key": "eng",
+"q": {
+"ar": "هل هو إنجليزي؟",
+"en": "Is he English?",
+"fr": "Est-il anglais ?",
+"es": "¿Es inglés?",
+"pt": "Ele é inglês?"
+}
+},
+{
+"key": "ger",
+"q": {
+"ar": "هل هو ألماني؟",
+"en": "Is he German?",
+"fr": "Est-il allemand ?",
+"es": "¿Es alemán?",
+"pt": "Ele é alemão?"
+}
+},
+{
+"key": "ita",
+"q": {
+"ar": "هل هو إيطالي؟",
+"en": "Is he Italian?",
+"fr": "Est-il italien ?",
+"es": "¿Es italiano?",
+"pt": "Ele é italiano?"
+}
+},
+{
+"key": "por",
+"q": {
+"ar": "هل هو برتغالي؟",
+"en": "Is he Portuguese?",
+"fr": "Est-il portugais ?",
+"es": "¿Es portugués?",
+"pt": "Ele é português?"
+}
+},
+{
+"key": "ned",
+"q": {
+"ar": "هل هو هولندي؟",
+"en": "Is he Dutch?",
+"fr": "Est-il néerlandais ?",
+"es": "¿Es neerlandés?",
+"pt": "Ele é holandês?"
+}
+},
+{
+"key": "fwd",
+"q": {
+"ar": "هل هو مهاجم أو جناح؟",
+"en": "Is he a striker or winger?",
+"fr": "Est-il attaquant ou ailier ?",
+"es": "¿Es delantero o extremo?",
+"pt": "Ele é atacante ou ponta?"
+}
+},
+{
+"key": "mid",
+"q": {
+"ar": "هل هو لاعب وسط؟",
+"en": "Is he a midfielder?",
+"fr": "Est-il milieu de terrain ?",
+"es": "¿Es centrocampista?",
+"pt": "Ele é meio-campista?"
+}
+},
+{
+"key": "def",
+"q": {
+"ar": "هل هو مدافع؟",
+"en": "Is he a defender?",
+"fr": "Est-il défenseur ?",
+"es": "¿Es defensa?",
+"pt": "Ele é zagueiro/defensor?"
+}
+},
+{
+"key": "gk",
+"q": {
+"ar": "هل هو حارس مرمى؟",
+"en": "Is he a goalkeeper?",
+"fr": "Est-il gardien ?",
+"es": "¿Es portero?",
+"pt": "Ele é goleiro?"
+}
+},
+{
+"key": "bdo",
+"q": {
+"ar": "هل فاز بالكرة الذهبية؟",
+"en": "Has he won the Ballon d’Or?",
+"fr": "A-t-il gagné le Ballon d’Or ?",
+"es": "¿Ganó el Balón de Oro?",
+"pt": "Ele ganhou a Bola de Ouro?"
+}
+},
+{
+"key": "prem",
+"q": {
+"ar": "هل لعب في الدوري الإنجليزي؟",
+"en": "Has he played in the Premier League?",
+"fr": "A-t-il joué en Premier League ?",
+"es": "¿Jugó en la Premier League?",
+"pt": "Ele jogou na Premier League?"
+}
+},
+{
+"key": "liga",
+"q": {
+"ar": "هل لعب في الدوري الإسباني؟",
+"en": "Has he played in La Liga?",
+"fr": "A-t-il joué en Liga ?",
+"es": "¿Jugó en LaLiga?",
+"pt": "Ele jogou em La Liga?"
+}
+},
+{
+"key": "seriea",
+"q": {
+"ar": "هل لعب في الدوري الإيطالي؟",
+"en": "Has he played in Serie A?",
+"fr": "A-t-il joué en Serie A ?",
+"es": "¿Jugó en la Serie A?",
+"pt": "Ele jogou na Serie A?"
+}
+},
+{
+"key": "bundes",
+"q": {
+"ar": "هل لعب في الدوري الألماني؟",
+"en": "Has he played in the Bundesliga?",
+"fr": "A-t-il joué en Bundesliga ?",
+"es": "¿Jugó en la Bundesliga?",
+"pt": "Ele jogou na Bundesliga?"
+}
+},
+{
+"key": "ligue1",
+"q": {
+"ar": "هل لعب في الدوري الفرنسي؟",
+"en": "Has he played in Ligue 1?",
+"fr": "A-t-il joué en Ligue 1 ?",
+"es": "¿Jugó en la Ligue 1?",
+"pt": "Ele jogou na Ligue 1?"
+}
+},
+{
+"key": "saudi",
+"q": {
+"ar": "هل لعب في الدوري السعودي؟",
+"en": "Has he played in the Saudi league?",
+"fr": "A-t-il joué en Arabie saoudite ?",
+"es": "¿Jugó en la liga saudí?",
+"pt": "Ele jogou na liga saudita?"
+}
+},
+{
+"key": "real",
+"q": {
+"ar": "هل لعب لريال مدريد؟",
+"en": "Has he played for Real Madrid?",
+"fr": "A-t-il joué au Real Madrid ?",
+"es": "¿Jugó en el Real Madrid?",
+"pt": "Ele jogou no Real Madrid?"
+}
+},
+{
+"key": "barca",
+"q": {
+"ar": "هل لعب لبرشلونة؟",
+"en": "Has he played for Barcelona?",
+"fr": "A-t-il joué au Barça ?",
+"es": "¿Jugó en el Barcelona?",
+"pt": "Ele jogou no Barcelona?"
+}
+},
+{
+"key": "psg",
+"q": {
+"ar": "هل لعب لباريس سان جيرمان؟",
+"en": "Has he played for PSG?",
+"fr": "A-t-il joué au PSG ?",
+"es": "¿Jugó en el PSG?",
+"pt": "Ele jogou no PSG?"
+}
+},
+{
+"key": "manu",
+"q": {
+"ar": "هل لعب لمانشستر يونايتد؟",
+"en": "Has he played for Manchester United?",
+"fr": "A-t-il joué à Manchester United ?",
+"es": "¿Jugó en el Manchester United?",
+"pt": "Ele jogou no Manchester United?"
+}
+},
+{
+"key": "mci",
+"q": {
+"ar": "هل لعب لمانشستر سيتي؟",
+"en": "Has he played for Manchester City?",
+"fr": "A-t-il joué à Manchester City ?",
+"es": "¿Jugó en el Manchester City?",
+"pt": "Ele jogou no Manchester City?"
+}
+},
+{
+"key": "liv",
+"q": {
+"ar": "هل لعب لليفربول؟",
+"en": "Has he played for Liverpool?",
+"fr": "A-t-il joué à Liverpool ?",
+"es": "¿Jugó en el Liverpool?",
+"pt": "Ele jogou no Liverpool?"
+}
+},
+{
+"key": "che",
+"q": {
+"ar": "هل لعب لتشيلسي؟",
+"en": "Has he played for Chelsea?",
+"fr": "A-t-il joué à Chelsea ?",
+"es": "¿Jugó en el Chelsea?",
+"pt": "Ele jogou no Chelsea?"
+}
+},
+{
+"key": "ars",
+"q": {
+"ar": "هل لعب لأرسنال؟",
+"en": "Has he played for Arsenal?",
+"fr": "A-t-il joué à Arsenal ?",
+"es": "¿Jugó en el Arsenal?",
+"pt": "Ele jogou no Arsenal?"
+}
+},
+{
+"key": "juve",
+"q": {
+"ar": "هل لعب ليوفنتوس؟",
+"en": "Has he played for Juventus?",
+"fr": "A-t-il joué à la Juventus ?",
+"es": "¿Jugó en la Juventus?",
+"pt": "Ele jogou na Juventus?"
+}
+},
+{
+"key": "milan",
+"q": {
+"ar": "هل لعب لميلان؟",
+"en": "Has he played for AC Milan?",
+"fr": "A-t-il joué à l’AC Milan ?",
+"es": "¿Jugó en el AC Milan?",
+"pt": "Ele jogou no Milan?"
+}
+},
+{
+"key": "inter",
+"q": {
+"ar": "هل لعب للإنتر؟",
+"en": "Has he played for Inter?",
+"fr": "A-t-il joué à l’Inter ?",
+"es": "¿Jugó en el Inter?",
+"pt": "Ele jogou na Inter?"
+}
+},
+{
+"key": "bayern",
+"q": {
+"ar": "هل لعب لبايرن ميونخ؟",
+"en": "Has he played for Bayern Munich?",
+"fr": "A-t-il joué au Bayern ?",
+"es": "¿Jugó en el Bayern?",
+"pt": "Ele jogou no Bayern?"
+}
+},
+{
+"key": "b70",
+"q": {
+"ar": "هل وُلد قبل 1970؟",
+"en": "Was he born before 1970?",
+"fr": "Est-il né avant 1970 ?",
+"es": "¿Nació antes de 1970?",
+"pt": "Ele nasceu antes de 1970?"
+}
+},
+{
+"key": "old",
+"q": {
+"ar": "هل وُلد قبل 1990؟",
+"en": "Was he born before 1990?",
+"fr": "Est-il né avant 1990 ?",
+"es": "¿Nació antes de 1990?",
+"pt": "Ele nasceu antes de 1990?"
+}
+},
+{
+"key": "young",
+"q": {
+"ar": "هل وُلد سنة 2000 أو بعدها؟",
+"en": "Was he born in 2000 or later?",
+"fr": "Est-il né en 2000 ou après ?",
+"es": "¿Nació en 2000 o después?",
+"pt": "Ele nasceu em 2000 ou depois?"
+}
+},
+{
+"key": "dead",
+"q": {
+"ar": "هل توفي؟",
+"en": "Has he passed away?",
+"fr": "Est-il décédé ?",
+"es": "¿Ha fallecido?",
+"pt": "Ele já faleceu?"
+}
+}
+]
+}
