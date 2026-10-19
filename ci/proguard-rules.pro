@@ -12,3 +12,4 @@
 -keep class com.llfbandit.record.** { *; }
 -keep class io.flutter.plugins.pathprovider.** { *; }
 -keep class dev.fluttercommunity.plus.share.** { *; }
+-keep class com.tekartik.sqflite.** { *; }

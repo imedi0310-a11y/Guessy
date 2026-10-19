@@ -1,4 +1,7 @@
+import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'data.dart';
 import 'sfx.dart';
 import 'theme.dart';
 
@@ -261,6 +264,47 @@ class SoundButton extends StatelessWidget {
       builder: (_, on, __) => GlassIconButton(
         icon: on ? Icons.volume_up_rounded : Icons.volume_off_rounded,
         onPressed: Sfx.toggle,
+      ),
+    );
+  }
+}
+
+final bool _isTest = (() {
+  try {
+    return Platform.environment.containsKey('FLUTTER_TEST');
+  } catch (_) {
+    return false;
+  }
+})();
+
+/// A card's real photo (cached), falling back to its emoji.
+class CardPic extends StatelessWidget {
+  final CardItem card;
+  final double size;
+  final double? radius;
+  const CardPic(this.card, {super.key, required this.size, this.radius});
+
+  @override
+  Widget build(BuildContext context) {
+    final emoji = SizedBox(
+      width: size,
+      height: size,
+      child: Center(child: Text(card.emoji, style: TextStyle(fontSize: size * 0.62, height: 1.1))),
+    );
+    final url = card.img;
+    if (url == null || _isTest) return emoji;
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(radius ?? size * 0.22),
+      child: CachedNetworkImage(
+        imageUrl: url,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        alignment: Alignment.topCenter,
+        httpHeaders: const {'User-Agent': 'GuessyApp/1.0 (Android)'},
+        fadeInDuration: const Duration(milliseconds: 200),
+        placeholder: (_, __) => emoji,
+        errorWidget: (_, __, ___) => emoji,
       ),
     );
   }

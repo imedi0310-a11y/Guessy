@@ -170,6 +170,8 @@ class _HomeScreenState extends State<HomeScreen> {
               GlassButton(icon: '📤', label: t('invite_friends'), color: Colors.white, onPressed: () => shareInvite()),
               const SizedBox(height: 18),
               Text(t('coming2'), textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 13, height: 1.5)),
+              const SizedBox(height: 8),
+              Text(t('photo_credit'), textAlign: TextAlign.center, style: const TextStyle(color: C.muted, fontSize: 11)),
             ],
           ),
         ),

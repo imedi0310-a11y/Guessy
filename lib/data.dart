@@ -15,6 +15,7 @@ class CardItem {
   final String en;
   final Map<String, dynamic> names;
   final Set<String> flags;
+  String? img; // free photo URL (Wikimedia), may be null
   CardItem(this.id, this.emoji, this.en, this.names, this.flags);
   String get name => loc(names);
 }
@@ -61,6 +62,20 @@ class GameData {
       return Cat(m['id'] as String, m['icon'] as String, Map<String, dynamic>.from(m['label'] as Map),
           m['people'] == true, attrs, cards);
     }).toList();
+    await _loadImages();
+  }
+
+  static Future<void> _loadImages() async {
+    try {
+      final raw = await rootBundle.loadString('assets/data/images.json');
+      final m = jsonDecode(raw) as Map<String, dynamic>;
+      for (final c in cats) {
+        for (final d in c.cards) {
+          final u = m[d.id];
+          if (u is String && u.startsWith('https://')) d.img = u;
+        }
+      }
+    } catch (_) {}
   }
 
   static Cat cat(String id) => cats.firstWhere((c) => c.id == id, orElse: () => cats.first);

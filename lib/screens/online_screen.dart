@@ -380,7 +380,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
               clipBehavior: Clip.none,
               children: [
                 _card(C.roseGrad, C.pink, g.nameOf(g.opp).isEmpty ? t('friend') : g.nameOf(g.opp),
-                    Text(opp.emoji, style: const TextStyle(fontSize: 36, height: 1.15)), opp.name, t('you_see'), const Color(0xFFFF9DBE)),
+                    CardPic(opp, size: 62), opp.name, t('you_see'), const Color(0xFFFF9DBE)),
                 if (!g.isOnline(g.opp))
                   Positioned.fill(
                     child: Container(
@@ -418,7 +418,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
 
   Widget _card(Gradient grad, Color glow, String title, Widget center, String? name, String sub, Color nameColor) {
     return SizedBox(
-      height: 132,
+      height: 150,
       child: GradientFrame(
         gradient: grad,
         glow: glow,
@@ -782,7 +782,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
       child: Column(children: [
         Text(label, style: const TextStyle(color: C.muted, fontSize: 12)),
-        Text(d.emoji, style: const TextStyle(fontSize: 34)),
+        CardPic(d, size: 60),
         Text(d.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w900)),
       ]),
     );
@@ -889,7 +889,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
                                 g.guess(d);
                               },
                         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-                          Text(d.emoji, style: const TextStyle(fontSize: 28)),
+                          CardPic(d, size: 46, radius: 10),
                           const SizedBox(height: 4),
                           Text(d.name,
                               textAlign: TextAlign.center,

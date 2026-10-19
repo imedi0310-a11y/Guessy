@@ -236,7 +236,7 @@ class _GameScreenState extends State<GameScreen> {
                     gradient: C.roseGrad,
                     glow: C.pink,
                     title: t('ai_name'),
-                    center: Text(opp!.emoji, style: const TextStyle(fontSize: 36, height: 1.15)),
+                    center: CardPic(opp!, size: 62),
                     name: opp.name,
                     sub: t('you_see'),
                     nameColor: const Color(0xFFFF9DBE),
@@ -257,7 +257,7 @@ class _GameScreenState extends State<GameScreen> {
     required Color nameColor,
   }) {
     return SizedBox(
-      height: 132,
+      height: 150,
       child: GradientFrame(
         gradient: gradient,
         glow: glow,
@@ -685,7 +685,7 @@ class _GameScreenState extends State<GameScreen> {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(d.emoji, style: const TextStyle(fontSize: 28)),
+                                  CardPic(d, size: 46, radius: 10),
                                   const SizedBox(height: 4),
                                   Text(d.name,
                                       textAlign: TextAlign.center,
@@ -721,7 +721,7 @@ class _GameScreenState extends State<GameScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(d.emoji, style: const TextStyle(fontSize: 56)),
+            CardPic(d, size: 130, radius: 18),
             const SizedBox(height: 6),
             GradientText(d.name, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
           ],
@@ -830,7 +830,7 @@ class _GameScreenState extends State<GameScreen> {
         children: [
           Text(label, style: const TextStyle(color: C.muted, fontSize: 12)),
           const SizedBox(height: 4),
-          Text(d.emoji, style: const TextStyle(fontSize: 40)),
+          CardPic(d, size: 64),
           const SizedBox(height: 2),
           Text(d.name,
               maxLines: 1,
