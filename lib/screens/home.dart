@@ -326,7 +326,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   shrinkWrap: true,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
-                  childAspectRatio: 0.95,
+                  childAspectRatio: 0.82,
                   children: [
                     for (final m in members)
                       _catTile(m, extra: '${m.cards.length}', onTap: () {
@@ -379,7 +379,21 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: const EdgeInsets.all(4),
                 child: tile,
               )
-            : Glass(radius: 18, padding: const EdgeInsets.all(4), child: tile),
+            : c.color != null && onTap != null
+                ? Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(18),
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Color(c.color!).withValues(alpha: 0.55), Color(c.color!).withValues(alpha: 0.12)],
+                      ),
+                      border: Border.all(color: Color(c.color!).withValues(alpha: 0.7)),
+                    ),
+                    child: tile,
+                  )
+                : Glass(radius: 18, padding: const EdgeInsets.all(4), child: tile),
       ),
     );
   }

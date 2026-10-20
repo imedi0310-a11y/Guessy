@@ -3,14 +3,20 @@ Run: python3 scripts/anime/build.py  — fails if a mode has two characters with
 import json, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from common import COMMON, q
-import naruto, onepiece, dragonball, demonslayer, aot, jjk, pokemon, mix, bleach, hxh, mha, conan, fairytail, blackclover, tokyoghoul, deathnote, opm, csm
+import naruto, onepiece, dragonball, demonslayer, aot, jjk, pokemon, mix, bleach, hxh, mha, conan, fairytail, blackclover, tokyoghoul, deathnote, opm, csm, kenshin, revengers, sololeveling, vinland, tsubasa, slamdunk
 
-MODULES = [mix, naruto, onepiece, dragonball, demonslayer, aot, jjk, bleach, hxh, mha, fairytail, blackclover, tokyoghoul, opm, csm, deathnote, conan, pokemon]
+MODULES = [mix, naruto, onepiece, dragonball, demonslayer, aot, jjk, bleach, hxh, mha, fairytail, blackclover, tokyoghoul, opm, csm, deathnote, conan, kenshin, revengers, sololeveling, vinland, tsubasa, slamdunk, pokemon]
 P = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'data', 'cards.json')
 d = json.load(open(P))
 ids = {m.META['id'] for m in MODULES}
 d['cats'] = [c for c in d['cats'] if c['id'] not in ids]
 d['groups'] = {'anime': {'icon': '🎌', 'label': q('أنمي', 'Anime', 'Anime', 'Anime', 'Anime')}}
+# a theme colour per anime (tile background), inspired by each show's usual palette
+COLORS = {'anime': '#C0392B', 'naruto': '#F39C12', 'onepiece': '#D35400', 'dragonball': '#F1C40F', 'demonslayer': '#16A085',
+          'aot': '#7F6A4D', 'jjk': '#5B2C83', 'bleach': '#E67E22', 'hxh': '#27AE60', 'mha': '#2E86C1', 'fairytail': '#E84393',
+          'blackclover': '#1E8449', 'tokyoghoul': '#922B21', 'opm': '#F4D03F', 'csm': '#E74C3C', 'deathnote': '#424949',
+          'conan': '#2874A6', 'kenshin': '#B03A2E', 'revengers': '#1C2833', 'sololeveling': '#3949AB', 'vinland': '#5D6D7E',
+          'tsubasa': '#1ABC9C', 'slamdunk': '#CB4335', 'pokemon': '#F7DC6F'}
 bad = False
 for m in MODULES:
     attrs = []
@@ -38,7 +44,7 @@ for m in MODULES:
     meta = dict(m.META)
     d['cats'].append({'id': meta.pop('id'), 'icon': meta.pop('icon'), 'en': 'anime character', 'noPhotos': True, 'group': 'anime',
                       'label': meta.pop('label'), 'example': meta.pop('example'), 'sample': meta.pop('sample'),
-                      'people': True, 'attrs': attrs, 'cards': cards})
+                      'people': True, 'color': COLORS.get(m.META['id']), 'attrs': attrs, 'cards': cards})
 if bad:
     sys.exit('fix duplicates')
 json.dump(d, open(P, 'w'), ensure_ascii=False, separators=(',', ':'))

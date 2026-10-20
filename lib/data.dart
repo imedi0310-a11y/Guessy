@@ -29,6 +29,7 @@ class Cat {
   final List<Attr> attrs;
   final List<CardItem> cards;
   String? group; // e.g. 'anime': shown together under one tile on the home screen
+  int? color; // optional theme colour (ARGB) for the tile
   Cat(this.id, this.icon, this.labels, this.people, this.attrs, this.cards);
   String get label => loc(labels);
   Attr? attr(String key) {
@@ -64,7 +65,8 @@ class GameData {
       }).toList();
       return Cat(m['id'] as String, m['icon'] as String, Map<String, dynamic>.from(m['label'] as Map),
           m['people'] == true, attrs, cards)
-        ..group = m['group'] as String?;
+        ..group = m['group'] as String?
+        ..color = int.tryParse('${m['color'] ?? ''}'.replaceFirst('#', 'FF'), radix: 16);
     }).toList();
     groups = {};
     ((j['groups'] as Map?) ?? const {}).forEach((k, v) {
