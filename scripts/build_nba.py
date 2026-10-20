@@ -73,7 +73,7 @@ for k in range(0, len(ids), 80):
         if 'iso' in r: e['iso'] = r['iso']['value']
     for r in sparql(f'''SELECT ?p ?pl WHERE {{ VALUES ?p {{ {vals} }} ?p p:P413/ps:P413 ?pos . ?pos rdfs:label ?pl FILTER(LANG(?pl)="en") }}'''):
         P[qid(r['p']['value'])]['pos'].add(r['pl']['value'].lower())
-    for r in sparql(f'''SELECT ?p ?tl ?ll WHERE {{ VALUES ?p {{ {vals} }} ?p p:P54/ps:P54 ?t . ?t rdfs:label ?tl FILTER(LANG(?tl)="en")
+    for r in sparql(f'''SELECT ?p ?tl ?ll WHERE {{ VALUES ?p {{ {vals} }} ?p p:P54 ?st . ?st ps:P54 ?t ; wikibase:rank ?rk . FILTER(?rk != wikibase:DeprecatedRank) ?t rdfs:label ?tl FILTER(LANG(?tl)="en")
         OPTIONAL {{ ?t wdt:P118 ?lg . ?lg rdfs:label ?ll FILTER(LANG(?ll)="en") }} }}'''):
         x = P[qid(r['p']['value'])]
         t = r['tl']['value']
@@ -83,8 +83,7 @@ for k in range(0, len(ids), 80):
         a = r['al']['value']
         x = P[qid(r['p']['value'])]
         if a == 'NBA Most Valuable Player Award': x['awards'].add('mvp')
-        if 'Hall of Fame' in a and 'Naismith' in a: x['awards'].add('hof')
-        if a == 'Olympic gold medal' or a.startswith('Olympic gold'): x['awards'].add('olygold')
+        # Hall of Fame / Olympic medals are too incomplete on Wikidata -> not used (answers must be reliable)
     time.sleep(1)
 
 

@@ -101,7 +101,7 @@ for k in range(0, len(ids), 80):
         P[qid(r['p']['value'])]['pos'].add(r['pl']['value'].lower())
     # clubs and their leagues
     # p:/ps: = ALL club statements (wdt: would only return the 'preferred' current club)
-    for r in sparql(f'''SELECT ?p ?t ?lg ?ll WHERE {{ VALUES ?p {{ {vals} }} ?p p:P54/ps:P54 ?t .
+    for r in sparql(f'''SELECT ?p ?t ?lg ?ll WHERE {{ VALUES ?p {{ {vals} }} ?p p:P54 ?st . ?st ps:P54 ?t ; wikibase:rank ?rk . FILTER(?rk != wikibase:DeprecatedRank)
         OPTIONAL {{ ?t wdt:P118 ?lg . OPTIONAL {{ ?lg rdfs:label ?ll FILTER(LANG(?ll)="en") }} }} }}'''):
         x = P[qid(r['p']['value'])]
         x['teams'].add(qid(r['t']['value']))

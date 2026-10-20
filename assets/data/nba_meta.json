@@ -141,26 +141,6 @@
 }
 },
 {
-"key": "hof",
-"q": {
-"ar": "هل دخل قاعة مشاهير كرة السلة؟",
-"en": "Is he in the Basketball Hall of Fame?",
-"fr": "Est-il au Hall of Fame ?",
-"es": "¿Está en el Salón de la Fama?",
-"pt": "Está no Hall da Fama?"
-}
-},
-{
-"key": "olygold",
-"q": {
-"ar": "هل فاز بذهبية أولمبية؟",
-"en": "Has he won Olympic gold?",
-"fr": "A-t-il gagné l’or olympique ?",
-"es": "¿Ganó oro olímpico?",
-"pt": "Ganhou ouro olímpico?"
-}
-},
-{
 "key": "lakers",
 "q": {
 "ar": "هل لعب لفريق لوس أنجلوس ليكرز؟",
