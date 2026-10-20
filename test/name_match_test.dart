@@ -105,7 +105,9 @@ void main() {
     expect(q('هل هو من رابطة الأشرار', GameData.cat('mha').attrs), 'lov');
     expect(q('هل هو من المنظمة السوداء', GameData.cat('conan').attrs), 'bo');
     expect(q('هل هو قاتل تنانين', GameData.cat('fairytail').attrs), 'slayer');
-    expect(GameData.cats.where((c) => c.group == 'anime').length, greaterThanOrEqualTo(13));
+    expect(q('هل هو من الثيران السوداء', GameData.cat('blackclover').attrs), 'bulls');
+    expect(q('هل هو غول', GameData.cat('tokyoghoul').attrs), 'ghoul');
+    expect(GameData.cats.where((c) => c.group == 'anime').length, greaterThanOrEqualTo(18));
   });
 
   test('guess list search is forgiving', () {

@@ -3,9 +3,9 @@ Run: python3 scripts/anime/build.py  — fails if a mode has two characters with
 import json, os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 from common import COMMON, q
-import naruto, onepiece, dragonball, demonslayer, aot, jjk, pokemon, mix, bleach, hxh, mha, conan, fairytail
+import naruto, onepiece, dragonball, demonslayer, aot, jjk, pokemon, mix, bleach, hxh, mha, conan, fairytail, blackclover, tokyoghoul, deathnote, opm, csm
 
-MODULES = [mix, naruto, onepiece, dragonball, demonslayer, aot, jjk, bleach, hxh, mha, fairytail, conan, pokemon]
+MODULES = [mix, naruto, onepiece, dragonball, demonslayer, aot, jjk, bleach, hxh, mha, fairytail, blackclover, tokyoghoul, opm, csm, deathnote, conan, pokemon]
 P = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'data', 'cards.json')
 d = json.load(open(P))
 ids = {m.META['id'] for m in MODULES}
