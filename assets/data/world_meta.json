@@ -10,6 +10,16 @@
 },
 "attrs": [
 {
+"key": "woman",
+"q": {
+"ar": "هل هي لاعبة (امرأة)؟",
+"en": "Is she a woman player?",
+"fr": "Est-ce une joueuse ?",
+"es": "¿Es una jugadora?",
+"pt": "É uma jogadora?"
+}
+},
+{
 "key": "arab",
 "q": {
 "ar": "هل هو لاعب عربي؟",

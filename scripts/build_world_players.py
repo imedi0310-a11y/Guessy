@@ -68,10 +68,12 @@ for k in range(0, len(ids), 80):
         v = r['a']['value']
         if len(v) <= 40 and v not in al and len(al) < 10:
             al.append(v)
-    # birth / death / image
-    for r in sparql(f'''SELECT ?p ?b ?d ?img WHERE {{ VALUES ?p {{ {vals} }}
-        OPTIONAL {{ ?p wdt:P569 ?b }} OPTIONAL {{ ?p wdt:P570 ?d }} OPTIONAL {{ ?p wdt:P18 ?img }} }}'''):
+    # birth / death / image / sex
+    for r in sparql(f'''SELECT ?p ?b ?d ?img ?sex WHERE {{ VALUES ?p {{ {vals} }}
+        OPTIONAL {{ ?p wdt:P569 ?b }} OPTIONAL {{ ?p wdt:P570 ?d }} OPTIONAL {{ ?p wdt:P18 ?img }} OPTIONAL {{ ?p wdt:P21 ?sex }} }}'''):
         x = P[qid(r['p']['value'])]
+        if r.get('sex', {}).get('value', '').endswith('/Q6581072'):
+            x['woman'] = True
         if 'b' in r and not x['born']:
             try:
                 x['born'] = int(r['b']['value'][:5].lstrip('+')[:4])
@@ -166,6 +168,8 @@ for i in ids:
         f.add('young')
     if x['dead']:
         f.add('dead')
+    if x.get('woman'):
+        f.add('woman')
     f |= x['leagues'] | x['awards']
     for t in x['teams']:
         if t in CLUBS:
