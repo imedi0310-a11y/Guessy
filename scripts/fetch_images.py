@@ -69,6 +69,10 @@ for cat in cards['cats']:
                     if src: break
             if not src:
                 miss.append(f'{cid}={title}'); continue
+            # only Wikimedia Commons files are freely licensed; local enwiki files (/wikipedia/en/) can be
+            # non-free "fair use" images (posters, logos, some portraits) -> never bundle those
+            if '/wikipedia/commons/' not in src:
+                miss.append(f'{cid}={title} (non-free)'); continue
             out[cid] = src
         except Exception as e:
             miss.append(f'{cid}={title} ({e.__class__.__name__})')
