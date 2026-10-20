@@ -113,7 +113,10 @@ void main() {
     final ufc = GameData.cat('ufc').attrs;
     expect(q('هل كان بطلا', ufc), 'champ');
     expect(q('هل هو من الوزن الثقيل', ufc), 'hw');
-    expect(GameData.cats.where((c) => c.group == 'sports').length, greaterThanOrEqualTo(3));
+    expect(GameData.cats.where((c) => c.group == 'sports').length, greaterThanOrEqualTo(2));
+    expect(GameData.cats.where((c) => c.group == 'fight').length, 3);
+    expect(q('هل دخل قاعة المشاهير', GameData.cat('wwe').attrs), 'hof');
+    expect(q('هل يلبس قناع', GameData.cat('wwe').attrs), 'mask');
   });
 
   test('guess list search is forgiving', () {
