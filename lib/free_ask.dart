@@ -121,7 +121,7 @@ String normText(String s) {
   var x = s.toLowerCase();
   x = x.replaceAll(RegExp(r'[ً-ْـ]'), '');
   x = x.replaceAll(RegExp('[أإآ]'), 'ا').replaceAll('ة', 'ه').replaceAll('ى', 'ي').replaceAll('ؤ', 'و').replaceAll('ئ', 'ي');
-  x = x.replaceAll(RegExp(r'[؟?!.,،"«»¿¡:;\-]'), ' ');
+  x = x.replaceAll(RegExp(r'[؟?!.,،"«»¿¡:;()\[\]\-]'), ' ');
   const accents = {'á': 'a', 'à': 'a', 'â': 'a', 'ã': 'a', 'é': 'e', 'è': 'e', 'ê': 'e', 'í': 'i', 'ó': 'o', 'ô': 'o', 'õ': 'o', 'ú': 'u', 'ç': 'c', 'ñ': 'n', 'ï': 'i', 'ü': 'u'};
   accents.forEach((k, v) => x = x.replaceAll(k, v));
   return x.replaceAll(RegExp(r'\s+'), ' ').trim();
@@ -453,7 +453,13 @@ final _attrCache = <Attr, List<List<String>>>{};
   var bestNot = false, tie = false;
   for (final a in attrs) {
     final variants = _attrCache.putIfAbsent(
-        a, () => a.q.values.map((v) => _qTokens('$v').where((t) => !t.anti).map((t) => t.w).toList()).where((l) => l.isNotEmpty).toList());
+        a,
+        () => a.q.values
+            // "A (B)?" can be asked as "A" alone, or with B
+            .expand((v) => {'$v', '$v'.replaceAll(RegExp(r'\s*\([^)]*\)'), '')})
+            .map((v) => _qTokens(v).where((t) => !t.anti).map((t) => t.w).toList())
+            .where((l) => l.isNotEmpty)
+            .toList());
     for (final at in variants) {
       var hits = 0.0;
       var anti = 0, plain = 0;

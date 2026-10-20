@@ -4,7 +4,7 @@ META = dict(id='bleach', icon='⚔️', label=q('بليتش', 'Bleach', 'Bleach'
             example=q('هل هو قائد فرقة؟', 'Is he a squad captain?', 'Est-il capitaine de division ?', '¿Es capitán de escuadrón?', 'É capitão de esquadrão?'))
 ATTRS = ['girl', 'villain', 'sword', 'glasses', 'hat', 'scar', 'old', 'kid', 'animal', 'bald', 'blond', 'black', 'white', 'red', 'blue', {
  'shinigami': q('هل هو شينيغامي (حاصد أرواح)؟', 'Is it a Soul Reaper (Shinigami)?', 'Est-ce un shinigami ?', '¿Es un shinigami?', 'É um shinigami?'),
- 'captain': q('هل هو (أو كان) قائد فرقة في الغوتي 13؟', 'Is (or was) it a Gotei 13 captain?', 'Est-il (ou a-t-il été) capitaine du Gotei 13 ?', '¿Es (o fue) capitán del Gotei 13?', 'É (ou foi) capitão do Gotei 13?'),
+ 'captain': q('هل هو (أو كان) قائد فرقة (في الغوتي 13)؟', 'Is (or was) it a squad captain (Gotei 13)?', 'Est-il (ou a-t-il été) capitaine de division (Gotei 13) ?', '¿Es (o fue) capitán de escuadrón (Gotei 13)?', 'É (ou foi) capitão de esquadrão (Gotei 13)?'),
  'hollow': q('هل هو هولو أو أرانكار؟', 'Is it a Hollow or Arrancar?', 'Est-ce un Hollow ou un Arrancar ?', '¿Es un Hollow o Arrancar?', 'É um Hollow ou Arrancar?'),
  'espada': q('هل هو من الإسبادا؟', 'Is it one of the Espada?', 'Fait-il partie des Espada ?', '¿Es de los Espada?', 'É um dos Espada?'),
  'quincy': q('هل هو كوينسي؟', 'Is it a Quincy?', 'Est-ce un Quincy ?', '¿Es un Quincy?', 'É um Quincy?'),
