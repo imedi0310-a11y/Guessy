@@ -82,6 +82,7 @@ class GameData {
       groups['$k'] = (icon: '${g['icon']}', labels: Map<String, dynamic>.from(g['label'] as Map));
     });
     await _loadImages();
+    await _loadExtra('stars');
     await _loadExtra('world');
     await _loadExtra('nba');
   }
@@ -107,6 +108,12 @@ class GameData {
       }).toList();
       final cat = Cat(id, '${meta['icon']}', Map<String, dynamic>.from(meta['label'] as Map), true, attrs, cards)
         ..group = meta['group'] as String?;
+      // the auto-built "stars of today" replaces the small hand-made football list
+      final old = cats.indexWhere((c) => c.id == 'players');
+      if (id == 'stars' && old >= 0) {
+        cats[old] = cat;
+        return;
+      }
       final at = cats.lastIndexWhere((c) => c.group != null && c.group == cat.group);
       final p = at >= 0 ? at : cats.indexWhere((c) => c.id == 'players');
       cats.insert(p < 0 ? cats.length : p + 1, cat);

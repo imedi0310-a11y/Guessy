@@ -54,6 +54,23 @@ NATION = {'Q262': 'alg', 'Q1028': 'mar', 'Q79': 'egy', 'Q155': 'bra', 'Q414': 'a
           'Q21': 'eng', 'Q145': 'eng', 'Q183': 'ger', 'Q38': 'ita', 'Q45': 'por', 'Q55': 'ned'}
 CONT = {'Q15': 'afr', 'Q46': 'eur', 'Q18': 'sam', 'Q49': 'nam', 'Q48': 'asia'}
 
+# extra: today's Arab players (born 1990+) even if less famous worldwide -> for the "stars of today" mode
+STARS = int(os.environ.get('STARS_LIMIT', '320'))
+try:
+    arab_vals = ' '.join('wd:' + c for c in ARAB)
+    extra = sparql(f'''SELECT ?p ?sl WHERE {{ VALUES ?c {{ {arab_vals} }}
+      ?p wdt:P106 wd:Q937857 ; wdt:P1532|wdt:P27 ?c ; wdt:P569 ?b ; wikibase:sitelinks ?sl .
+      FILTER(YEAR(?b) >= 1990 && ?sl >= 8) }} ORDER BY DESC(?sl) LIMIT 220''')
+    for r in extra:
+        i = qid(r['p']['value'])
+        if i not in P:
+            ids.append(i)
+            P[i] = {'names': {}, 'countries': set(), 'continents': set(), 'iso': None, 'pos': set(), 'teams': set(),
+                    'leagues': set(), 'awards': set(), 'born': None, 'dead': False, 'img': None, 'alias': []}
+    print('with arab extras:', len(ids))
+except Exception as e:
+    print('arab extra failed', e)
+
 for k in range(0, len(ids), 80):
     chunk = ids[k:k + 80]
     vals = ' '.join('wd:' + i for i in chunk)
@@ -176,18 +193,21 @@ for i in ids:
             f.add(CLUBS[t])
     names = {l: n.get(l) or n['en'] for l in ('ar', 'en', 'fr', 'es', 'pt')}
     cards.append({'id': i, 'emoji': flag_emoji(e['iso'], main), 'en': n['en'], 'name': names,
-                  'flags': sorted(f), 'aliases': x['alias'], 'img_src': x['img']})
-    if len(cards) >= LIMIT:
-        break
+                  'flags': sorted(f), 'aliases': x['alias'], 'img_src': x['img'], '_born': x['born']})
 
-print('cards:', len(cards))
+allcards = cards
+cards = allcards[:LIMIT]  # world: the most famous of all time
+stars = [c for c in allcards if c['_born'] >= 1990 and 'dead' not in c['flags']][:STARS]
+have = {c['id'] for c in stars}
+stars += [c for c in allcards if c['_born'] >= 1990 and 'arab' in c['flags'] and c['id'] not in have][:150]
+print('cards:', len(cards), 'stars:', len(stars))
 
 # 2) photos (Commons, free licenses) bundled in the app
 from PIL import Image
 os.makedirs('assets/photos', exist_ok=True)
 got = 0
-for c in cards:
-    src = c.pop('img_src')
+for c in list({id(c): c for c in cards + stars}.values()):
+    src = c.pop('img_src', None)
     if not src:
         continue
     fn = urllib.parse.unquote(src.rsplit('/', 1)[-1])
@@ -216,7 +236,17 @@ for c in cards:
             break
     time.sleep(0.1)
 
+for c in cards + stars:
+    c.pop('_born', None)
 json.dump({'cards': cards}, open('assets/data/world.json', 'w'), ensure_ascii=False, separators=(',', ':'))
+json.dump({'cards': stars}, open('assets/data/stars.json', 'w'), ensure_ascii=False, separators=(',', ':'))
+meta = json.load(open('assets/data/world_meta.json'))
+meta.update({'id': 'stars', 'icon': '⭐', 'group': 'sports',
+             'label': {'ar': 'نجوم الكرة اليوم', 'en': 'Football stars today', 'fr': 'Stars du foot actuelles',
+                       'es': 'Estrellas actuales del fútbol', 'pt': 'Estrelas do futebol atuais'}})
+meta['attrs'] = [a for a in meta['attrs'] if a['key'] not in ('b70', 'old', 'dead')]
+json.dump(meta, open('assets/data/stars_meta.json', 'w'), ensure_ascii=False, indent=0)
+print(f'::notice title=stars::{len(stars)} current players, {sum(1 for c in stars if "arab" in c["flags"])} Arab')
 sample = cards[:4]
 print(f'::notice title=world players::{len(cards)} players, {got} photos. sample: ' +
       ' | '.join(f"{s['name']['ar']} {s['emoji']} {','.join(s['flags'])}" for s in sample))
