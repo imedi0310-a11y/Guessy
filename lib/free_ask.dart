@@ -317,7 +317,7 @@ const _filler = {
   'هاد', 'هادي', 'هادا', 'ذلك', 'تلك', 'الذي', 'التي', 'شخص', 'شخصيه', 'مشهور', 'مشهوره', 'نجم', 'نجمه', 'حيوان', 'شي', 'شيء',
   'حاجه', 'لاعب', 'لاعبه', 'مدرب', 'دوله', 'بلد', 'مهنه', 'اكله', 'يكون', 'تكون', 'كان', 'كانت', 'في', 'من', 'على', 'الى', 'او',
   'ام', 'ما', 'يا', 'مع', 'و', 'ب', 'ل', 'انا', 'نتا', 'انت', 'عندو', 'عنده', 'بطاقتي', 'بطاقه', 'كارطه', 'ديالي', 'تاعي', 'هنا',
-  'قل', 'قولي', 'اخبرني', 'ممكن', 'يعني', 'بصح', 'صح', 'برك', 'غير', 'كيما', 'مثل', 'جدا', 'بزاف', 'ياسر',
+  'قل', 'قولي', 'اخبرني', 'member', 'membre', 'miembro', 'membro', 'ممكن', 'يعني', 'بصح', 'صح', 'برك', 'غير', 'كيما', 'مثل', 'جدا', 'بزاف', 'ياسر',
   // English
   'is', 'it', 'he', 'she', 'they', 'are', 'was', 'were', 'a', 'an', 'the', 'this', 'that', 'person', 'player', 'does', 'do', 'did',
   'has', 'have', 'had', 'can', 'my', 'card', 'of', 'in', 'on', 'at', 'to', 'for', 'or', 'and', 'still', 'famous', 'celebrity', 'thing', 'i', 'am', 'very',
@@ -351,7 +351,9 @@ const _syn = {
   'دزيري': 'جزايري', 'جزائري': 'جزايري', 'مروكي': 'مغربي', 'مصراوي': 'مصري', 'امريكاني': 'امريكي', 'فرانساوي': 'فرنسي',
   'سبنيولي': 'اسباني', 'طليان': 'ايطالي', 'طلياني': 'ايطالي', 'برازيلي': 'برازيلي', 'يغني': 'يغني', 'مغني': 'يغني', 'مطرب': 'يغني', 'يغنى': 'يغني',
   'ممثل': 'ممثل', 'يمثل': 'ممثل', 'كوميدي': 'كوميدي', 'يضحك': 'كوميدي', 'يوتيوبر': 'يوتيوب', 'انستغرام': 'يوتيوب', 'تيك': 'يوتيوب',
-  'طاير': 'طاير', 'يبيض': 'يبيض', 'بيض': 'يبيض',
+  'طاير': 'طاير',
+  'ناري': 'نار', 'مايي': 'ماء', 'عشبي': 'عشب', 'كهربايي': 'كهرباء', 'جليدي': 'جليد', 'شبحي': 'شبح', 'سام': 'سم',
+  'شياطين': 'شيطان', 'عمالقه': 'عملاق', 'قراصنه': 'قرصان', 'يبيض': 'يبيض', 'بيض': 'يبيض',
 };
 
 /// Opposites: asking "is he alive?" = asking "has he died?" with the answer reversed.
@@ -431,6 +433,15 @@ double _wMatch(String a, String b, [bool prefixTried = false]) {
   return 0;
 }
 
+/// Words that only "frame" a question (has / wears / uses / member / hair…): they count 4x less,
+/// so "هل عنده شارينغان" still matches "هل يملك عين الشارينغان".
+const _light = {
+  'يملك', 'لديه', 'عنده', 'عندو', 'له', 'لها', 'عين', 'عيون', 'عضو', 'عضوا', 'يستطيع', 'يقدر', 'يستعمل', 'يلبس', 'يقاتل', 'يغطي',
+  'اصبح', 'صار', 'نوع', 'لون', 'لونه', 'اساسي', 'شعره', 'شعر', 'جسمه', 'وجهه', 'فمه', 'واضحه', 'قائد', 'فريق', 'طاقم', 'عشيره', 'عائله',
+  'مدرسه', 'قريه', 'own', 'use', 'uses', 'wear', 'wears', 'member', 'hair', 'its', 'type', 'from', 'fight', 'with', 'face', 'clan', 'family',
+  'team', 'crew', 'main', 'color', 'colour',
+};
+
 final _attrCache = <Attr, List<List<String>>>{};
 
 /// Finds which listed question a free sentence means. `not` = the sentence asks the opposite.
@@ -446,7 +457,10 @@ final _attrCache = <Attr, List<List<String>>>{};
     for (final at in variants) {
       var hits = 0.0;
       var anti = 0, plain = 0;
+      var total = 0.0;
       for (final w in at) {
+        final weight = _light.contains(w) ? 0.25 : 1.0;
+        total += weight;
         var m = 0.0;
         var isAnti = false;
         for (final it in input) {
@@ -456,11 +470,11 @@ final _attrCache = <Attr, List<List<String>>>{};
             isAnti = it.anti;
           }
         }
-        hits += m;
-        if (m > 0) isAnti ? anti++ : plain++;
+        hits += m * weight;
+        if (m > 0 && weight == 1.0) isAnti ? anti++ : plain++;
       }
       if (hits == 0) continue;
-      final cov = hits / at.length;
+      final cov = hits / total;
       if (cov < 0.6) continue;
       final better = cov > bestScore + 0.01 || ((cov - bestScore).abs() <= 0.01 && hits > bestHits + 0.01);
       final same = (cov - bestScore).abs() <= 0.01 && (hits - bestHits).abs() <= 0.01;

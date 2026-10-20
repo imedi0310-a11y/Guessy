@@ -86,6 +86,21 @@ void main() {
     expect(n('هل هو ناروتو'), ['anime.naruto']);
     expect(n('قوكو'), ['anime.goku']);
     expect(n('لوفي'), ['anime.luffy']);
+
+    // anime modes
+    final nar = GameData.cat('naruto').attrs;
+    expect(q('هل هو من عشيرة الأوتشيها', nar), 'uchiha');
+    expect(q('واش هو من الأكاتسوكي', nar), 'akatsuki');
+    expect(q('هل عنده شارينغان', nar), 'sharingan');
+    expect(q('هل هو أشقر', nar), 'blond');
+    final pk = GameData.cat('pokemon').attrs;
+    expect(q('هل هو ناري', pk), 'fire');
+    expect(q('هل هو من نوع الماء', pk), 'water');
+    expect(q('هل هو أسطوري', pk), 'legendary');
+    final op = GameData.cat('onepiece').attrs;
+    expect(q('هل أكل فاكهة الشيطان', op), 'fruit');
+    expect(q('هل هو من طاقم قبعة القش', op), 'strawhat');
+    expect(GameData.cats.where((c) => c.group == 'anime').length, greaterThanOrEqualTo(8));
   });
 
   test('guess list search is forgiving', () {

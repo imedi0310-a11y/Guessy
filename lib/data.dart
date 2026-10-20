@@ -28,6 +28,7 @@ class Cat {
   final bool people;
   final List<Attr> attrs;
   final List<CardItem> cards;
+  String? group; // e.g. 'anime': shown together under one tile on the home screen
   Cat(this.id, this.icon, this.labels, this.people, this.attrs, this.cards);
   String get label => loc(labels);
   Attr? attr(String key) {
@@ -40,6 +41,7 @@ class Cat {
 
 class GameData {
   static List<Cat> cats = [];
+  static Map<String, ({String icon, Map<String, dynamic> labels})> groups = {};
 
   static Future<void> load() async {
     if (cats.isNotEmpty) return;
@@ -61,8 +63,14 @@ class GameData {
         )..alias = ((dm['aliases'] as List?) ?? const []).map((e) => '$e').toList();
       }).toList();
       return Cat(m['id'] as String, m['icon'] as String, Map<String, dynamic>.from(m['label'] as Map),
-          m['people'] == true, attrs, cards);
+          m['people'] == true, attrs, cards)
+        ..group = m['group'] as String?;
     }).toList();
+    groups = {};
+    ((j['groups'] as Map?) ?? const {}).forEach((k, v) {
+      final g = v as Map;
+      groups['$k'] = (icon: '${g['icon']}', labels: Map<String, dynamic>.from(g['label'] as Map));
+    });
     await _loadImages();
     await _loadWorld();
   }

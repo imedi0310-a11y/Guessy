@@ -140,7 +140,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 mainAxisSpacing: 10,
                 crossAxisSpacing: 10,
                 childAspectRatio: 0.82,
-                children: [for (final c in GameData.cats) _catTile(c)],
+                children: [
+                  for (final c in GameData.cats)
+                    if (c.group == null)
+                      _catTile(c)
+                    else if (GameData.cats.firstWhere((x) => x.group == c.group) == c)
+                      _groupTile(c.group!),
+                ],
               ),
               const SizedBox(height: 24),
               _sectionTitle(t('difficulty')),
@@ -288,25 +294,79 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _catTile(Cat c) {
-    final sel = c.id == catId;
+  /// One tile for a whole group (e.g. Anime); tapping it lists the modes inside.
+  Widget _groupTile(String g) {
+    final members = GameData.cats.where((c) => c.group == g).toList();
+    final cur = members.where((c) => c.id == catId).firstOrNull;
+    final info = GameData.groups[g];
+    return _catTile(members.first,
+        icon: cur?.icon ?? info?.icon ?? members.first.icon,
+        label: cur != null ? cur.label : (info != null ? loc(info.labels) : members.first.label),
+        selected: cur != null,
+        onTap: () => _pickInGroup(g, members));
+  }
+
+  void _pickInGroup(String g, List<Cat> members) {
+    Sfx.play('tap');
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (c) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('${GameData.groups[g]?.icon ?? ''} ${GameData.groups[g] != null ? loc(GameData.groups[g]!.labels) : ''}',
+                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+              const SizedBox(height: 12),
+              Flexible(
+                child: GridView.count(
+                  crossAxisCount: 3,
+                  shrinkWrap: true,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: 0.95,
+                  children: [
+                    for (final m in members)
+                      _catTile(m, extra: '${m.cards.length}', onTap: () {
+                        Navigator.pop(c);
+                        setState(() {
+                          catId = m.id;
+                          Prefs.cat = m.id;
+                        });
+                      }),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _catTile(Cat c, {String? icon, String? label, bool? selected, VoidCallback? onTap, String? extra}) {
+    final sel = selected ?? c.id == catId;
     final tile = Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(c.icon, style: const TextStyle(fontSize: 30)),
+        Text(icon ?? c.icon, style: const TextStyle(fontSize: 30)),
         const SizedBox(height: 6),
-        Text(c.label,
+        Text(label ?? c.label,
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(fontSize: 12.5, fontWeight: sel ? FontWeight.w800 : FontWeight.w500, color: sel ? C.goldLight : Colors.white)),
+        if (extra != null) Text(extra, style: const TextStyle(fontSize: 11, color: C.gold)),
       ],
     );
     return GestureDetector(
-      onTap: () => setState(() {
-        catId = c.id;
-        Prefs.cat = c.id;
-      }),
+      onTap: onTap ??
+          () => setState(() {
+                catId = c.id;
+                Prefs.cat = c.id;
+              }),
       child: AnimatedScale(
         duration: const Duration(milliseconds: 180),
         scale: sel ? 1.0 : 0.96,

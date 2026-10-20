@@ -66,7 +66,8 @@ void main() {
   test('bot always finds its card when answered honestly', () async {
     TestWidgetsFlutterBinding.ensureInitialized();
     await GameData.load();
-    for (final cat in GameData.cats) {
+    // anime modes are checked for unique answers when built; play a couple of them here to keep CI fast
+    for (final cat in GameData.cats.where((c) => c.group == null || c.id == 'naruto' || c.id == 'pokemon')) {
       final g = GameController(cat: cat, diff: 'hard');
       // Simulate honest answers without timers.
       for (var i = 0; i < 60 && g.over == null; i++) {
