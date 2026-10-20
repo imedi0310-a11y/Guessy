@@ -71,7 +71,7 @@ for cat in cards['cats']:
                 miss.append(f'{cid}={title}'); continue
             # only Wikimedia Commons files are freely licensed; local enwiki files (/wikipedia/en/) can be
             # non-free "fair use" images (posters, logos, some portraits) -> never bundle those
-            if '/wikipedia/commons/' not in src:
+            if '/wikipedia/commons/' not in src and cat['id'] != 'countries':  # national flags are public domain
                 miss.append(f'{cid}={title} (non-free)'); continue
             out[cid] = src
         except Exception as e:
