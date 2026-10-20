@@ -40,4 +40,11 @@ CHARS = [
  ('enmu', '😴', 'Enmu', 'إينمو', 'demon moon', ['انمو', 'إينمو']),
  ('tamayo', '🌺', 'Tamayo', 'تامايو', 'girl demon', ['تامايو']),
  ('yushiro', '🎨', 'Yushiro', 'يوشيرو', 'demon', ['يوشيرو']),
+ ('aoi', '🩹', 'Aoi Kanzaki', 'آوي كانزاكي', 'girl', ['اوي', 'آوي']),
+ ('murata', '🙂', 'Murata', 'موراتا', 'sword black', ['موراتا']),
+ ('hantengu', '😨', 'Hantengu', 'هانتينغو', 'demon moon upper old', ['هانتينغو']),
+ ('gyokko', '🏺', 'Gyokko', 'غيوكو', 'demon moon upper', ['غيوكو', 'جيوكو']),
+ ('haganezuka', '⚒️', 'Hotaru Haganezuka', 'هوتارو هاغانيزوكا', 'mask', ['هاغانيزوكا']),
+ ('senjuro', '🔥', 'Senjuro Rengoku', 'سينجورو رينغوكو', 'blond', ['سينجورو']),
+ ('nakime', '🪕', 'Nakime', 'ناكيمي', 'girl demon moon upper black', ['ناكيمي']),
 ]

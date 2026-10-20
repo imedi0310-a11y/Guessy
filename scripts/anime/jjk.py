@@ -2,7 +2,7 @@ from common import q
 META = dict(id='jjk', icon='🤞', label=q('جوجوتسو كايسن', 'Jujutsu Kaisen', 'Jujutsu Kaisen', 'Jujutsu Kaisen', 'Jujutsu Kaisen'),
             sample=q('ساتورو غوجو', 'Satoru Gojo', 'Satoru Gojo', 'Satoru Gojo', 'Satoru Gojo'),
             example=q('هل هو لعنة؟', 'Is it a curse?', 'Est-ce un fléau ?', '¿Es una maldición?', 'É uma maldição?'))
-ATTRS = ['girl', 'villain', 'sword', 'gun', 'mask', 'glasses', 'scar', 'animal', 'bald', 'blond', 'black', 'white', 'red', 'pink', 'blue', {
+ATTRS = ['girl', 'villain', 'sword', 'gun', 'mask', 'glasses', 'scar', 'animal', 'bald', 'old', 'blond', 'black', 'white', 'red', 'pink', 'blue', {
  'curse': q('هل هو لعنة (روح ملعونة)؟', 'Is it a curse (cursed spirit)?', 'Est-ce un fléau ?', '¿Es una maldición?', 'É uma maldição?'),
  'tokyo': q('هل هو من مدرسة طوكيو للجوجوتسو؟', 'Is it from Tokyo Jujutsu High?', 'Vient-il de l’école d’exorcisme de Tokyo ?', '¿Es de la Escuela de Jujutsu de Tokio?', 'É da Escola Jujutsu de Tóquio?'),
  'kyoto': q('هل هو من مدرسة كيوتو للجوجوتسو؟', 'Is it from Kyoto Jujutsu High?', 'Vient-il de l’école d’exorcisme de Kyoto ?', '¿Es de la Escuela de Jujutsu de Kioto?', 'É da Escola Jujutsu de Kyoto?'),
@@ -36,4 +36,14 @@ CHARS = [
  ('choso', '🩸', 'Choso', 'تشوسو', 'curse black', ['تشوسو']),
  ('naoya', '🎞️', 'Naoya Zen’in', 'ناويا زين-إن', 'zenin villain blond', ['ناويا']),
  ('uraume', '❄️', 'Uraume', 'أوراومي', 'villain white', ['اوراومي']),
+ ('junpei', '🎬', 'Junpei Yoshino', 'جونبي يوشينو', 'black', ['جونبي']),
+ ('mechamaru', '🤖', 'Mechamaru', 'ميكامارو', 'kyoto student', ['ميكامارو']),
+ ('momo', '🧹', 'Momo Nishimiya', 'مومو نيشيميا', 'girl kyoto student blond', ['مومو']),
+ ('utahime', '🎤', 'Utahime Iori', 'أوتاهيمي إيوري', 'girl kyoto teacher scar black', ['اوتاهيمي']),
+ ('gakuganji', '🎸', 'Yoshinobu Gakuganji', 'يوشينوبو غاكوغانجي', 'kyoto teacher old', ['غاكوغانجي']),
+ ('kenjaku', '🧠', 'Kenjaku', 'كينجاكو', 'villain scar black', ['كينجاكو']),
+ ('yuki', '🏍️', 'Yuki Tsukumo', 'يوكي تسوكومو', 'girl blond', ['يوكي']),
+ ('higuruma', '⚖️', 'Hiromi Higuruma', 'هيرومي هيغوروما', '', ['هيغوروما']),
+ ('rika', '💍', 'Rika Orimoto', 'ريكا أوريموتو', 'girl curse', ['ريكا']),
+ ('meimei', '🪓', 'Mei Mei', 'مي مي', 'girl white', ['مي مي', 'ميمي']),
 ]

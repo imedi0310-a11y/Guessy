@@ -100,7 +100,12 @@ void main() {
     final op = GameData.cat('onepiece').attrs;
     expect(q('هل أكل فاكهة الشيطان', op), 'fruit');
     expect(q('هل هو من طاقم قبعة القش', op), 'strawhat');
-    expect(GameData.cats.where((c) => c.group == 'anime').length, greaterThanOrEqualTo(8));
+    expect(q('هل هو قائد فرقة', GameData.cat('bleach').attrs), 'captain');
+    expect(q('هل هو من عصابة العناكب', GameData.cat('hxh').attrs), 'troupe');
+    expect(q('هل هو من رابطة الأشرار', GameData.cat('mha').attrs), 'lov');
+    expect(q('هل هو من المنظمة السوداء', GameData.cat('conan').attrs), 'bo');
+    expect(q('هل هو قاتل تنانين', GameData.cat('fairytail').attrs), 'slayer');
+    expect(GameData.cats.where((c) => c.group == 'anime').length, greaterThanOrEqualTo(13));
   });
 
   test('guess list search is forgiving', () {

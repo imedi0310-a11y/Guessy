@@ -1,0 +1,42 @@
+from common import q
+META = dict(id='conan', icon='🔍', label=q('المحقق كونان', 'Detective Conan', 'Détective Conan', 'Detective Conan', 'Detetive Conan'),
+            sample=q('ران موري', 'Ran Mouri', 'Rachel Moore', 'Ran Mouri', 'Ran Mouri'),
+            example=q('هل هو من المنظمة السوداء؟', 'Is he in the Black Organization?', 'Fait-il partie de l’Organisation des hommes en noir ?', '¿Es de la Organización Negra?', 'É da Organização Negra?'))
+ATTRS = ['girl', 'villain', 'kid', 'glasses', 'hat', 'gun', 'old', 'blond', 'black', {
+ 'detective': q('هل هو محقق؟', 'Is it a detective?', 'Est-ce un détective ?', '¿Es detective?', 'É detetive?'),
+ 'police': q('هل هو من الشرطة؟', 'Is it a police officer?', 'Est-ce un policier ?', '¿Es policía?', 'É policial?'),
+ 'bo': q('هل هو (أو كان) من المنظمة السوداء؟', 'Is (or was) it in the Black Organization?', 'Fait-il (ou a-t-il fait) partie de l’Organisation noire ?', '¿Es (o fue) de la Organización Negra?', 'É (ou foi) da Organização Negra?'),
+ 'fbi': q('هل هو من الـ FBI؟', 'Is it an FBI agent?', 'Est-ce un agent du FBI ?', '¿Es agente del FBI?', 'É agente do FBI?'),
+ 'dboys': q('هل هو من فرقة المحققين الصغار؟', 'Is it in the Detective Boys?', 'Fait-il partie des Détectives Boys ?', '¿Es de la Liga Juvenil de Detectives?', 'É dos Detetives Mirins?'),
+ 'osaka': q('هل هو من أوساكا؟', 'Is it from Osaka?', 'Vient-il d’Osaka ?', '¿Es de Osaka?', 'É de Osaka?'),
+ 'thief': q('هل هو لص؟', 'Is it a thief?', 'Est-ce un voleur ?', '¿Es un ladrón?', 'É um ladrão?'),
+ 'fat': q('هل هو سمين؟', 'Is it chubby?', 'Est-il enrobé ?', '¿Es gordito?', 'É gordinho?'),
+ 'lawyer': q('هل هو محامٍ؟', 'Is it a lawyer?', 'Est-ce un avocat ?', '¿Es abogado?', 'É advogado?'),
+}]
+NAMES = {'ran': {'fr': 'Rachel Moore'}, 'kogoro': {'fr': 'Richard Moore'}, 'conan': {'fr': 'Conan Edogawa'}}
+CHARS = [
+ ('conan', '🔍', 'Conan Edogawa', 'كونان إيدوغاوا', 'detective kid dboys glasses black', ['كونان', 'المحقق كونان']),
+ ('shinichi', '🕵️', 'Shinichi Kudo', 'شينيتشي كودو', 'detective black', ['شينيتشي', 'كودو', 'سينشي']),
+ ('ran', '🥋', 'Ran Mouri', 'ران موري', 'girl', ['ران']),
+ ('kogoro', '🍺', 'Kogoro Mouri', 'كوغورو موري', 'detective', ['كوغورو', 'المحقق النائم', 'موري']),
+ ('ai', '🧪', 'Ai Haibara (Sherry)', 'آي هايبارا (شيري)', 'girl kid dboys bo', ['هايبارا', 'شيري', 'آي', 'اي']),
+ ('agasa', '🧓', 'Professor Agasa', 'البروفيسور أغاسا', 'old glasses', ['اغاسا', 'أغاسا', 'البروفيسور']),
+ ('ayumi', '🎀', 'Ayumi Yoshida', 'أيومي يوشيدا', 'girl kid dboys', ['ايومي', 'أيومي']),
+ ('genta', '🍙', 'Genta Kojima', 'غينتا كوجيما', 'kid dboys fat', ['غينتا', 'جينتا']),
+ ('mitsuhiko', '📘', 'Mitsuhiko Tsuburaya', 'ميتسوهيكو تسوبورايا', 'kid dboys', ['ميتسوهيكو']),
+ ('heiji', '🧢', 'Heiji Hattori', 'هيجي هاتوري', 'detective osaka hat black', ['هيجي', 'هاتوري']),
+ ('kazuha', '🎗️', 'Kazuha Toyama', 'كازوها تومايا', 'girl osaka', ['كازوها']),
+ ('sonoko', '💅', 'Sonoko Suzuki', 'سونوكو سوزوكي', 'girl blond', ['سونوكو']),
+ ('kid', '🎩', 'Kaito Kid', 'كايتو كيد (اللص كيد)', 'thief hat gun', ['كيد', 'اللص كيد', 'كايتو']),
+ ('gin', '🖤', 'Gin', 'جين', 'villain bo hat gun blond', ['جين']),
+ ('vodka', '🕶️', 'Vodka', 'فودكا', 'villain bo hat gun glasses', ['فودكا']),
+ ('vermouth', '💄', 'Vermouth', 'فيرموث', 'girl villain bo gun blond', ['فيرموث']),
+ ('amuro', '☕', 'Toru Amuro (Bourbon)', 'تورو أمورو (بوربون)', 'detective police bo blond', ['امورو', 'أمورو', 'بوربون']),
+ ('akai', '🎯', 'Shuichi Akai', 'شويتشي أكاي', 'fbi gun hat black', ['اكاي', 'أكاي']),
+ ('jodie', '👓', 'Jodie Starling', 'جودي ستارلينغ', 'girl fbi glasses gun blond', ['جودي']),
+ ('megure', '👮', 'Inspector Megure', 'المفتش ميغوري', 'police hat', ['ميغوري', 'المفتش']),
+ ('takagi', '🚓', 'Wataru Takagi', 'واتارو تاكاغي', 'police black', ['تاكاغي']),
+ ('sato', '🚔', 'Miwako Sato', 'ميواكو ساتو', 'girl police black', ['ساتو']),
+ ('eri', '⚖️', 'Eri Kisaki', 'إيري كيساكي', 'girl lawyer glasses', ['ايري', 'إيري']),
+ ('subaru', '🍛', 'Subaru Okiya', 'سوبارو أوكيا', 'glasses', ['سوبارو']),
+]

@@ -36,4 +36,13 @@ CHARS = [
  ('hannes', '🍺', 'Hannes', 'هانيس', 'blond beard', ['هانيس']),
  ('floch', '📢', 'Floch Forster', 'فلوك فورستر', 'survey sword red', ['فلوك']),
  ('ymirfritz', '👸', 'Ymir Fritz', 'يمير فريتز', 'girl titan royal', ['يمير فريتز']),
+ ('marco', '🙂', 'Marco Bott', 'ماركو بوت', 'sword black', ['ماركو']),
+ ('carla', '🏠', 'Carla Yeager', 'كارلا ييغر', 'girl', ['كارلا']),
+ ('dina', '🌼', 'Dina Fritz', 'دينا فريتز', 'girl titan royal blond', ['دينا']),
+ ('uri', '🕊️', 'Uri Reiss', 'أوري رايس', 'titan royal blond', ['اوري']),
+ ('rod', '🍷', 'Rod Reiss', 'رود رايس', 'titan royal old', ['رود']),
+ ('yelena', '🌙', 'Yelena', 'يلينا', 'girl blond', ['يلينا']),
+ ('nile', '🎩', 'Nile Dok', 'نايل دوك', 'leader beard', ['نايل']),
+ ('magath', '🎖️', 'Theo Magath', 'ثيو ماغاث', 'marley leader', ['ماغاث']),
+ ('colt', '📯', 'Colt Grice', 'كولت غرايس', 'marley blond', ['كولت']),
 ]
