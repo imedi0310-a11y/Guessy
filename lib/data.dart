@@ -17,6 +17,7 @@ class CardItem {
   final Set<String> flags;
   String? img; // bundled photo asset path, may be null
   List<String> alias = const []; // other names people use (nicknames, spellings)
+  int? tint; // category theme colour, used to draw a nicer card when there is no photo
   CardItem(this.id, this.emoji, this.en, this.names, this.flags);
   String get name => loc(names);
 }
@@ -68,6 +69,13 @@ class GameData {
         ..group = m['group'] as String?
         ..color = int.tryParse('${m['color'] ?? ''}'.replaceFirst('#', 'FF'), radix: 16);
     }).toList();
+    for (final c in cats) {
+      if (c.color != null) {
+        for (final d in c.cards) {
+          d.tint = c.color;
+        }
+      }
+    }
     groups = {};
     ((j['groups'] as Map?) ?? const {}).forEach((k, v) {
       final g = v as Map;

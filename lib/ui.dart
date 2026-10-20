@@ -291,6 +291,20 @@ class CardPic extends StatelessWidget {
       child: Center(child: Text(card.emoji, style: TextStyle(fontSize: size * 0.62, height: 1.1))),
     );
     final path = card.img;
+    if (path == null && card.tint != null) {
+      // no photo (e.g. anime, copyrighted): a themed badge with the symbol
+      final col = Color(card.tint!);
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(radius ?? size * 0.22),
+          gradient: RadialGradient(colors: [col.withValues(alpha: 0.85), col.withValues(alpha: 0.25)], radius: 0.9),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.25), width: size > 60 ? 2 : 1),
+        ),
+        child: Center(child: Text(card.emoji, style: TextStyle(fontSize: size * 0.5, height: 1.1))),
+      );
+    }
     if (path == null || _isTest) return emoji;
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius ?? size * 0.22),
