@@ -138,7 +138,7 @@ WWE_EXTRA = {
  'dead': q('هل توفي؟', 'Has he passed away?', 'Est-il décédé ?', '¿Ha fallecido?', 'Já faleceu?'),
  'actor': q('هل أصبح ممثلاً في أفلام هوليوود؟', 'Did he become a Hollywood movie actor?', 'Est-il devenu acteur à Hollywood ?', '¿Se hizo actor de Hollywood?', 'Virou ator de Hollywood?'),
  'giant': q('هل هو عملاق (أطول من مترين)؟', 'Is he a giant (taller than 2 m)?', 'Est-ce un géant (plus de 2 m) ?', '¿Es un gigante (más de 2 m)?', 'É um gigante (mais de 2 m)?'),
- 'mask': q('هل اشتهر بارتداء قناع؟', 'Is he known for wearing a mask?', 'Est-il connu pour porter un masque ?', '¿Es conocido por usar máscara?', 'É conhecido por usar máscara?'),
+ 'mask': q('هل يلبس قناعاً (ماسك)؟', 'Is he known for wearing a mask?', 'Est-il connu pour porter un masque ?', '¿Es conocido por usar máscara?', 'É conhecido por usar máscara?'),
  'blond': q('هل شعره أشقر؟', 'Is his hair blond?', 'A-t-il les cheveux blonds ?', '¿Tiene el pelo rubio?', 'Tem cabelo loiro?'),
  'red': q('هل شعره أحمر أو برتقالي؟', 'Is his hair red or orange?', 'A-t-il les cheveux roux ?', '¿Tiene el pelo rojo o naranja?', 'Tem cabelo ruivo?'),
  'samoan': q('هل هو من العائلة السامووية (أنوائي)؟', 'Is he from the Samoan Anoa’i family?', 'Fait-il partie de la famille samoane Anoa’i ?', '¿Es de la familia samoana Anoa’i?', 'É da família samoana Anoa’i?'),
