@@ -82,14 +82,15 @@ class GameData {
       groups['$k'] = (icon: '${g['icon']}', labels: Map<String, dynamic>.from(g['label'] as Map));
     });
     await _loadImages();
-    await _loadWorld();
+    await _loadExtra('world');
+    await _loadExtra('nba');
   }
 
-  /// Optional big category built from Wikidata in CI (assets/data/world.json).
-  static Future<void> _loadWorld() async {
+  /// Optional big categories built from Wikidata in CI (assets/data/<id>.json + <id>_meta.json).
+  static Future<void> _loadExtra(String id) async {
     try {
-      final meta = jsonDecode(await rootBundle.loadString('assets/data/world_meta.json')) as Map<String, dynamic>;
-      final data = jsonDecode(await rootBundle.loadString('assets/data/world.json')) as Map<String, dynamic>;
+      final meta = jsonDecode(await rootBundle.loadString('assets/data/${id}_meta.json')) as Map<String, dynamic>;
+      final data = jsonDecode(await rootBundle.loadString('assets/data/$id.json')) as Map<String, dynamic>;
       final list = (data['cards'] as List?) ?? [];
       if (list.length < 30) return;
       final attrs = (meta['attrs'] as List)
@@ -97,16 +98,18 @@ class GameData {
           .toList();
       final cards = list.map((d) {
         final dm = d as Map<String, dynamic>;
-        final c = CardItem('world.${dm['id']}', '${dm['emoji']}', '${dm['en']}',
+        final c = CardItem('$id.${dm['id']}', '${dm['emoji']}', '${dm['en']}',
             Map<String, dynamic>.from(dm['name'] as Map), (dm['flags'] as List).map((e) => '$e').toSet());
         final img = dm['img'];
         if (img is String && img.startsWith('assets/')) c.img = img;
         c.alias = ((dm['aliases'] as List?) ?? const []).map((e) => '$e').toList();
         return c;
       }).toList();
-      final cat = Cat('world', '${meta['icon']}', Map<String, dynamic>.from(meta['label'] as Map), true, attrs, cards);
-      final at = cats.indexWhere((c) => c.id == 'players');
-      cats.insert(at < 0 ? cats.length : at + 1, cat);
+      final cat = Cat(id, '${meta['icon']}', Map<String, dynamic>.from(meta['label'] as Map), true, attrs, cards)
+        ..group = meta['group'] as String?;
+      final at = cats.lastIndexWhere((c) => c.group != null && c.group == cat.group);
+      final p = at >= 0 ? at : cats.indexWhere((c) => c.id == 'players');
+      cats.insert(p < 0 ? cats.length : p + 1, cat);
     } catch (_) {}
   }
 

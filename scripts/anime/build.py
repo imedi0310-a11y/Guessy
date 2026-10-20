@@ -10,7 +10,7 @@ P = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'data', 'cards
 d = json.load(open(P))
 ids = {m.META['id'] for m in MODULES}
 d['cats'] = [c for c in d['cats'] if c['id'] not in ids]
-d['groups'] = {'anime': {'icon': '🎌', 'label': q('أنمي', 'Anime', 'Anime', 'Anime', 'Anime')}}
+d.setdefault('groups', {})['anime'] = ( {'icon': '🎌', 'label': q('أنمي', 'Anime', 'Anime', 'Anime', 'Anime')})
 # a theme colour per anime (tile background), inspired by each show's usual palette
 COLORS = {'anime': '#C0392B', 'naruto': '#F39C12', 'onepiece': '#D35400', 'dragonball': '#F1C40F', 'demonslayer': '#16A085',
           'aot': '#7F6A4D', 'jjk': '#5B2C83', 'bleach': '#E67E22', 'hxh': '#27AE60', 'mha': '#2E86C1', 'fairytail': '#E84393',

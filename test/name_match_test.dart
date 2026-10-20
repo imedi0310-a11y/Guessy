@@ -110,6 +110,10 @@ void main() {
     expect(q('هل هو من الثيران السوداء', GameData.cat('blackclover').attrs), 'bulls');
     expect(q('هل هو غول', GameData.cat('tokyoghoul').attrs), 'ghoul');
     expect(GameData.cats.where((c) => c.group == 'anime').length, greaterThanOrEqualTo(18));
+    final ufc = GameData.cat('ufc').attrs;
+    expect(q('هل كان بطلا', ufc), 'champ');
+    expect(q('هل هو من الوزن الثقيل', ufc), 'hw');
+    expect(GameData.cats.where((c) => c.group == 'sports').length, greaterThanOrEqualTo(3));
   });
 
   test('guess list search is forgiving', () {

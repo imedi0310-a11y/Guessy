@@ -12,7 +12,7 @@ OVR = {
  'nurse':'Nurse','soldier':'Soldier','judge':'Judge','chef':'Chef','barber':'Barber','salad':'Salad','juice':'Juice',
  'Xavi Hernández':'Xavi','Luis de la Fuente':'Luis de la Fuente (footballer, born 1961)','Rodri':'Rodri (footballer, born 1996)',
  'Pedri':'Pedri','Elissa':'Elissa (singer)','Mohamed Fellag':'Fellag','Luis Enrique':'Luis Enrique (footballer)',
- 'Palestine':'State of Palestine','Neymar':'Neymar','Soolking':'Soolking','Mohamed Ramadan':'Mohamed Ramadan (actor)',
+ 'Palestine':'State of Palestine', 'Sean O’Malley':"Sean O'Malley (fighter)", 'Michael Chandler':'Michael Chandler (fighter)', 'Robert Whittaker':'Robert Whittaker (fighter)','Neymar':'Neymar','Soolking':'Soolking','Mohamed Ramadan':'Mohamed Ramadan (actor)',
 }
 UA = 'GuessyApp/1.0 (https://github.com/imedi0310-a11y/Guessy)'
 

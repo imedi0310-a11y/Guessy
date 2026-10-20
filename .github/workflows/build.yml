@@ -58,6 +58,7 @@ jobs:
           pip install --quiet pillow
           python3 scripts/fetch_images.py || echo '{}' > assets/data/images.json
           python3 scripts/build_world_players.py || echo '::warning::world players failed'
+          python3 scripts/build_nba.py || echo '::warning::nba failed'
           du -sh assets/photos; ls assets/photos | wc -l
 
       - name: Get packages + app icon

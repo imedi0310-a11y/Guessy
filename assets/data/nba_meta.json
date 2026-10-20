@@ -1,0 +1,354 @@
+{
+"id": "nba",
+"icon": "🏀",
+"group": "sports",
+"label": {
+"ar": "كرة السلة (NBA)",
+"en": "Basketball (NBA)",
+"fr": "Basket (NBA)",
+"es": "Baloncesto (NBA)",
+"pt": "Basquete (NBA)"
+},
+"attrs": [
+{
+"key": "usa",
+"q": {
+"ar": "هل هو أمريكي؟",
+"en": "Is he American?",
+"fr": "Est-il américain ?",
+"es": "¿Es estadounidense?",
+"pt": "É americano?"
+}
+},
+{
+"key": "intl",
+"q": {
+"ar": "هل هو من خارج أمريكا؟",
+"en": "Is he from outside the USA?",
+"fr": "Vient-il d’un autre pays que les États-Unis ?",
+"es": "¿Es de fuera de EE. UU.?",
+"pt": "É de fora dos EUA?"
+}
+},
+{
+"key": "eur",
+"q": {
+"ar": "هل هو أوروبي؟",
+"en": "Is he European?",
+"fr": "Est-il européen ?",
+"es": "¿Es europeo?",
+"pt": "É europeu?"
+}
+},
+{
+"key": "afr",
+"q": {
+"ar": "هل هو من أفريقيا؟",
+"en": "Is he from Africa?",
+"fr": "Vient-il d’Afrique ?",
+"es": "¿Es de África?",
+"pt": "É da África?"
+}
+},
+{
+"key": "arab",
+"q": {
+"ar": "هل هو عربي؟",
+"en": "Is he Arab?",
+"fr": "Est-il arabe ?",
+"es": "¿Es árabe?",
+"pt": "É árabe?"
+}
+},
+{
+"key": "fra",
+"q": {
+"ar": "هل هو فرنسي؟",
+"en": "Is he French?",
+"fr": "Est-il français ?",
+"es": "¿Es francés?",
+"pt": "É francês?"
+}
+},
+{
+"key": "can",
+"q": {
+"ar": "هل هو كندي؟",
+"en": "Is he Canadian?",
+"fr": "Est-il canadien ?",
+"es": "¿Es canadiense?",
+"pt": "É canadense?"
+}
+},
+{
+"key": "guard",
+"q": {
+"ar": "هل يلعب في مركز الغارد (صانع ألعاب أو مسدد)؟",
+"en": "Is he a guard?",
+"fr": "Est-il arrière / meneur ?",
+"es": "¿Es base o escolta?",
+"pt": "É armador ou ala-armador?"
+}
+},
+{
+"key": "forward",
+"q": {
+"ar": "هل يلعب في مركز الجناح (فورورد)؟",
+"en": "Is he a forward?",
+"fr": "Est-il ailier ?",
+"es": "¿Es alero o ala-pívot?",
+"pt": "É ala ou ala-pivô?"
+}
+},
+{
+"key": "center",
+"q": {
+"ar": "هل يلعب في مركز السنتر (تحت السلة)؟",
+"en": "Is he a center?",
+"fr": "Est-il pivot ?",
+"es": "¿Es pívot?",
+"pt": "É pivô?"
+}
+},
+{
+"key": "tall",
+"q": {
+"ar": "هل طوله 2.11 متر أو أكثر؟",
+"en": "Is he 2.11 m (6′11″) or taller?",
+"fr": "Mesure-t-il 2,11 m ou plus ?",
+"es": "¿Mide 2,11 m o más?",
+"pt": "Tem 2,11 m ou mais?"
+}
+},
+{
+"key": "short",
+"q": {
+"ar": "هل طوله أقل من 1.90 متر؟",
+"en": "Is he shorter than 1.90 m (6′3″)?",
+"fr": "Mesure-t-il moins de 1,90 m ?",
+"es": "¿Mide menos de 1,90 m?",
+"pt": "Tem menos de 1,90 m?"
+}
+},
+{
+"key": "mvp",
+"q": {
+"ar": "هل فاز بجائزة أفضل لاعب (MVP) في الموسم؟",
+"en": "Has he won the NBA MVP award?",
+"fr": "A-t-il été MVP de la saison NBA ?",
+"es": "¿Ganó el MVP de la NBA?",
+"pt": "Ganhou o MVP da NBA?"
+}
+},
+{
+"key": "hof",
+"q": {
+"ar": "هل دخل قاعة مشاهير كرة السلة؟",
+"en": "Is he in the Basketball Hall of Fame?",
+"fr": "Est-il au Hall of Fame ?",
+"es": "¿Está en el Salón de la Fama?",
+"pt": "Está no Hall da Fama?"
+}
+},
+{
+"key": "olygold",
+"q": {
+"ar": "هل فاز بذهبية أولمبية؟",
+"en": "Has he won Olympic gold?",
+"fr": "A-t-il gagné l’or olympique ?",
+"es": "¿Ganó oro olímpico?",
+"pt": "Ganhou ouro olímpico?"
+}
+},
+{
+"key": "lakers",
+"q": {
+"ar": "هل لعب لفريق لوس أنجلوس ليكرز؟",
+"en": "Did he play for the Los Angeles Lakers?",
+"fr": "A-t-il joué pour les Los Angeles Lakers ?",
+"es": "¿Jugó en los Los Angeles Lakers?",
+"pt": "Jogou pelo Los Angeles Lakers?"
+}
+},
+{
+"key": "celtics",
+"q": {
+"ar": "هل لعب لفريق بوسطن سيلتكس؟",
+"en": "Did he play for the Boston Celtics?",
+"fr": "A-t-il joué pour les Boston Celtics ?",
+"es": "¿Jugó en los Boston Celtics?",
+"pt": "Jogou pelo Boston Celtics?"
+}
+},
+{
+"key": "bulls",
+"q": {
+"ar": "هل لعب لفريق شيكاغو بولز؟",
+"en": "Did he play for the Chicago Bulls?",
+"fr": "A-t-il joué pour les Chicago Bulls ?",
+"es": "¿Jugó en los Chicago Bulls?",
+"pt": "Jogou pelo Chicago Bulls?"
+}
+},
+{
+"key": "warriors",
+"q": {
+"ar": "هل لعب لفريق غولدن ستايت ووريورز؟",
+"en": "Did he play for the Golden State Warriors?",
+"fr": "A-t-il joué pour les Golden State Warriors ?",
+"es": "¿Jugó en los Golden State Warriors?",
+"pt": "Jogou pelo Golden State Warriors?"
+}
+},
+{
+"key": "heat",
+"q": {
+"ar": "هل لعب لفريق ميامي هيت؟",
+"en": "Did he play for the Miami Heat?",
+"fr": "A-t-il joué pour les Miami Heat ?",
+"es": "¿Jugó en los Miami Heat?",
+"pt": "Jogou pelo Miami Heat?"
+}
+},
+{
+"key": "spurs",
+"q": {
+"ar": "هل لعب لفريق سان أنطونيو سبيرز؟",
+"en": "Did he play for the San Antonio Spurs?",
+"fr": "A-t-il joué pour les San Antonio Spurs ?",
+"es": "¿Jugó en los San Antonio Spurs?",
+"pt": "Jogou pelo San Antonio Spurs?"
+}
+},
+{
+"key": "knicks",
+"q": {
+"ar": "هل لعب لفريق نيويورك نيكس؟",
+"en": "Did he play for the New York Knicks?",
+"fr": "A-t-il joué pour les New York Knicks ?",
+"es": "¿Jugó en los New York Knicks?",
+"pt": "Jogou pelo New York Knicks?"
+}
+},
+{
+"key": "cavs",
+"q": {
+"ar": "هل لعب لفريق كليفلاند كافالييرز؟",
+"en": "Did he play for the Cleveland Cavaliers?",
+"fr": "A-t-il joué pour les Cleveland Cavaliers ?",
+"es": "¿Jugó en los Cleveland Cavaliers?",
+"pt": "Jogou pelo Cleveland Cavaliers?"
+}
+},
+{
+"key": "rockets",
+"q": {
+"ar": "هل لعب لفريق هيوستن روكتس؟",
+"en": "Did he play for the Houston Rockets?",
+"fr": "A-t-il joué pour les Houston Rockets ?",
+"es": "¿Jugó en los Houston Rockets?",
+"pt": "Jogou pelo Houston Rockets?"
+}
+},
+{
+"key": "mavs",
+"q": {
+"ar": "هل لعب لفريق دالاس مافريكس؟",
+"en": "Did he play for the Dallas Mavericks?",
+"fr": "A-t-il joué pour les Dallas Mavericks ?",
+"es": "¿Jugó en los Dallas Mavericks?",
+"pt": "Jogou pelo Dallas Mavericks?"
+}
+},
+{
+"key": "bucks",
+"q": {
+"ar": "هل لعب لفريق ميلووكي باكس؟",
+"en": "Did he play for the Milwaukee Bucks?",
+"fr": "A-t-il joué pour les Milwaukee Bucks ?",
+"es": "¿Jugó en los Milwaukee Bucks?",
+"pt": "Jogou pelo Milwaukee Bucks?"
+}
+},
+{
+"key": "sixers",
+"q": {
+"ar": "هل لعب لفريق فيلادلفيا سفنتي سيكسرز؟",
+"en": "Did he play for the Philadelphia 76ers?",
+"fr": "A-t-il joué pour les Philadelphia 76ers ?",
+"es": "¿Jugó en los Philadelphia 76ers?",
+"pt": "Jogou pelo Philadelphia 76ers?"
+}
+},
+{
+"key": "okc",
+"q": {
+"ar": "هل لعب لفريق أوكلاهوما سيتي ثاندر؟",
+"en": "Did he play for the Oklahoma City Thunder?",
+"fr": "A-t-il joué pour les Oklahoma City Thunder ?",
+"es": "¿Jugó en los Oklahoma City Thunder?",
+"pt": "Jogou pelo Oklahoma City Thunder?"
+}
+},
+{
+"key": "suns",
+"q": {
+"ar": "هل لعب لفريق فينكس صنز؟",
+"en": "Did he play for the Phoenix Suns?",
+"fr": "A-t-il joué pour les Phoenix Suns ?",
+"es": "¿Jugó en los Phoenix Suns?",
+"pt": "Jogou pelo Phoenix Suns?"
+}
+},
+{
+"key": "nuggets",
+"q": {
+"ar": "هل لعب لفريق دنفر ناغتس؟",
+"en": "Did he play for the Denver Nuggets?",
+"fr": "A-t-il joué pour les Denver Nuggets ?",
+"es": "¿Jugó en los Denver Nuggets?",
+"pt": "Jogou pelo Denver Nuggets?"
+}
+},
+{
+"key": "b70",
+"q": {
+"ar": "هل وُلد قبل 1970؟",
+"en": "Was he born before 1970?",
+"fr": "Est-il né avant 1970 ?",
+"es": "¿Nació antes de 1970?",
+"pt": "Nasceu antes de 1970?"
+}
+},
+{
+"key": "old",
+"q": {
+"ar": "هل وُلد قبل 1990؟",
+"en": "Was he born before 1990?",
+"fr": "Est-il né avant 1990 ?",
+"es": "¿Nació antes de 1990?",
+"pt": "Nasceu antes de 1990?"
+}
+},
+{
+"key": "young",
+"q": {
+"ar": "هل وُلد سنة 2000 أو بعدها؟",
+"en": "Was he born in 2000 or later?",
+"fr": "Est-il né en 2000 ou après ?",
+"es": "¿Nació en 2000 o después?",
+"pt": "Nasceu em 2000 ou depois?"
+}
+},
+{
+"key": "dead",
+"q": {
+"ar": "هل توفي؟",
+"en": "Has he passed away?",
+"fr": "Est-il décédé ?",
+"es": "¿Ha fallecido?",
+"pt": "Já faleceu?"
+}
+}
+]
+}

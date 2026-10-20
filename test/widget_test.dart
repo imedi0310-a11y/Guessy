@@ -67,7 +67,7 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     await GameData.load();
     // anime modes are checked for unique answers when built; play a couple of them here to keep CI fast
-    for (final cat in GameData.cats.where((c) => c.group == null || c.id == 'naruto' || c.id == 'pokemon')) {
+    for (final cat in GameData.cats.where((c) => c.group == null || const {'naruto', 'pokemon', 'players', 'ufc'}.contains(c.id))) {
       final g = GameController(cat: cat, diff: 'hard');
       // Simulate honest answers without timers.
       for (var i = 0; i < 60 && g.over == null; i++) {
