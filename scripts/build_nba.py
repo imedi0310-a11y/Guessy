@@ -160,10 +160,3 @@ json.dump({'cards': cards}, open('assets/data/nba.json', 'w'), ensure_ascii=Fals
 print(f"::notice title=nba::{len(cards)} players, {got} photos. sample: " +
       ' | '.join(f"{s['name']['ar']} {','.join(s['flags'])}" for s in cards[:4]))
 
-# debug: where does a doubtful team link come from?
-try:
-    dbg = sparql('''SELECT ?tl ?rk ?pq ?v WHERE { wd:Q36159 p:P54 ?st . ?st ps:P54 ?t ; wikibase:rank ?rk .
-      ?t rdfs:label ?tl FILTER(LANG(?tl)="en") OPTIONAL { ?st ?pq ?v . FILTER(STRSTARTS(STR(?pq), "http://www.wikidata.org/prop/qualifier/")) } }''')
-    print('::notice title=lebron teams::' + ' | '.join(f"{r['tl']['value']} {r['rk']['value'][-12:]} {r.get('pq',{}).get('value','')[-6:]}={r.get('v',{}).get('value','')[-20:]}" for r in dbg)[:3000])
-except Exception as e:
-    print('dbg failed', e)
