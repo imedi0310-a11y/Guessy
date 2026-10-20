@@ -490,10 +490,15 @@ class _GameScreenState extends State<GameScreen> {
       _openDeck(only: g.candidates);
       return;
     }
-    if (r == null || r == 'dup') {
+    if (r == null || r == 'dup' || r == 'na') {
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(r == 'dup' ? t('already_asked') : '${t('not_understood')}\n«$text»')));
+        ..showSnackBar(SnackBar(
+            content: Text(r == 'dup'
+                ? t('already_asked')
+                : r == 'na'
+                    ? '${t('not_in_cat')}\n«$text»'
+                    : '${t('not_understood')}\n«$text»')));
     }
   }
 

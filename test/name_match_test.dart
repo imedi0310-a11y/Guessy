@@ -63,6 +63,8 @@ void main() {
     expect(q('واش هو مغني راي', celebs), 'rai');
     expect(q('هل هو ممثل مشهور', celebs), 'act');
     expect(q('هل هذا الشخص جزائري', celebs), 'alg');
+    expect(q('هل هو اروبي', celebs), 'eur');
+    expect(q('هل هو أوروبي', celebs), 'eur');
     expect(q('هل هذا اللاعب لعب في برشلونة', world), 'barca');
     expect(q('هل لعب لبرشلونة', world), 'barca');
     expect(q('واش لعب في البارصا', world), 'barca');

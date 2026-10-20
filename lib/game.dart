@@ -152,7 +152,13 @@ class GameController extends ChangeNotifier {
       return 'amb';
     }
     final m = matchQuestion(text, cat.attrs);
-    if (m == null) return null;
+    if (m == null) {
+      // understood, but this category has no such question (e.g. "European?" in a category without it)
+      for (final other in GameData.cats) {
+        if (other != cat && matchQuestion(text, other.attrs) != null) return 'na';
+      }
+      return null;
+    }
     if (myKnown.containsKey(m.attr.key)) return 'dup';
     var q = text.trim();
     if (!q.endsWith('?') && !q.endsWith('؟')) q += Lang.code == 'ar' ? '؟' : '?';
