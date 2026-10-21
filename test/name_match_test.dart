@@ -75,6 +75,8 @@ void main() {
     expect(q('هل يعيش هذا الحيوان في البحر', animals), 's');
     expect(q('هل هذا الحيوان يطير', animals), 'fl');
     expect(q('هل لعب في الدوري', world), isNull); // too vague: which league?
+    expect(q('هل لعب في الدوري الاروبي', world), anyOf('eurl', isNull)); // never "is he European?"
+    expect(q('هل هو لاعب كرة قدم من البرازيل', world), 'bra');
 
     final anime = GameData.cat('anime');
     expect(anime.id, 'anime');

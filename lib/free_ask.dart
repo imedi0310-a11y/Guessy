@@ -442,7 +442,7 @@ const _light = {
   'يملك', 'لديه', 'عنده', 'عندو', 'له', 'لها', 'عين', 'عيون', 'عضو', 'عضوا', 'يستطيع', 'يقدر', 'يستعمل', 'يلبس', 'يقاتل', 'يغطي',
   'اصبح', 'صار', 'نوع', 'لون', 'لونه', 'اساسي', 'شعره', 'شعر', 'جسمه', 'وجهه', 'فمه', 'واضحه', 'قائد', 'فريق', 'طاقم', 'عشيره', 'عائله',
   'مدرسه', 'قريه', 'own', 'use', 'uses', 'wear', 'wears', 'member', 'hair', 'its', 'type', 'from', 'fight', 'with', 'face', 'clan', 'family',
-  'team', 'crew', 'main', 'color', 'colour', 'بوكيمون', 'pokemon', 'ufc', 'اشتهر', 'known', 'best',
+  'team', 'crew', 'main', 'color', 'colour', 'بوكيمون', 'pokemon', 'ufc', 'اشتهر', 'known', 'best', 'كره', 'قدم', 'football',
 };
 
 final _attrCache = <Attr, List<List<String>>>{};
@@ -485,10 +485,21 @@ final _attrCache = <Attr, List<List<String>>>{};
       if (hits == 0) continue;
       final cov = hits / total;
       if (cov < 0.6) continue;
-      final better = cov > bestScore + 0.01 || ((cov - bestScore).abs() <= 0.01 && hits > bestHits + 0.01);
-      final same = (cov - bestScore).abs() <= 0.01 && (hits - bestHits).abs() <= 0.01;
+      // the other way round: how much of what the player said is explained by this question?
+      // ("did he play in a European league?" must not become "is he European?")
+      var inTotal = 0.0, inHit = 0.0;
+      for (final it in input) {
+        final wt = _light.contains(it.w) ? 0.25 : 1.0;
+        inTotal += wt;
+        if (at.any((t) => _wMatch(it.w, t) >= 0.75)) inHit += wt;
+      }
+      final prec = inTotal == 0 ? 1.0 : inHit / inTotal;
+      if (prec < 0.5) continue;
+      final score = cov * (0.6 + 0.4 * prec);
+      final better = score > bestScore + 0.01 || ((score - bestScore).abs() <= 0.01 && hits > bestHits + 0.01);
+      final same = (score - bestScore).abs() <= 0.01 && (hits - bestHits).abs() <= 0.01;
       if (better) {
-        bestScore = cov;
+        bestScore = score;
         bestHits = hits;
         best = a;
         bestNot = anti > 0 && plain == 0;

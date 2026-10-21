@@ -188,6 +188,8 @@ for i in ids:
     if x.get('woman'):
         f.add('woman')
     f |= x['leagues'] | x['awards']
+    if x['leagues'] & {'prem', 'liga', 'seriea', 'bundes', 'ligue1'}:
+        f.add('eurl')
     for t in x['teams']:
         if t in CLUBS:
             f.add(CLUBS[t])

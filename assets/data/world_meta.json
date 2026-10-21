@@ -230,6 +230,16 @@
 }
 },
 {
+"key": "eurl",
+"q": {
+"ar": "هل لعب في الدوري الأوروبي (الدوريات الخمس الكبرى)؟",
+"en": "Has he played in a top-5 European league?",
+"fr": "A-t-il joué dans un des 5 grands championnats européens ?",
+"es": "¿Ha jugado en una de las 5 grandes ligas europeas?",
+"pt": "Jogou numa das 5 grandes ligas europeias?"
+}
+},
+{
 "key": "prem",
 "q": {
 "ar": "هل لعب في الدوري الإنجليزي؟",
