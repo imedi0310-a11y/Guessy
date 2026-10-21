@@ -484,7 +484,10 @@ class _GameScreenState extends State<GameScreen> {
     );
   }
 
-  void _freeAsk(String text) {
+  void _freeAsk(String raw) {
+    final alts = raw.split('\n').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+    if (alts.isEmpty) return;
+    final text = alts.firstWhere(g.understands, orElse: () => alts.first);
     final r = g.askFree(text);
     if (r == 'amb') {
       _openDeck(only: g.candidates);

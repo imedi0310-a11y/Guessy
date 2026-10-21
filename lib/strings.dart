@@ -134,6 +134,8 @@ const Map<String, List<String>> _s = {
   'voice_no_speech': ['لم أسمع شيئاً 🎤 اضغط على الميكروفون وتكلّم بوضوح','I didn’t hear anything 🎤 Tap the mic and speak clearly','Je n’ai rien entendu 🎤 Appuie sur le micro et parle','No escuché nada 🎤 Toca el micrófono y habla','Não ouvi nada 🎤 Toque no microfone e fale'],
   'voice_network': ['التعرّف على الصوت يحتاج إلى الإنترنت 📶','Voice recognition needs internet 📶','La reconnaissance vocale nécessite internet 📶','El reconocimiento de voz necesita internet 📶','O reconhecimento de voz precisa de internet 📶'],
   'not_in_cat': ['فهمت سؤالك، لكنه غير موجود في هذا القسم 🙏 اختر سؤالاً من القائمة','I understood, but that question isn’t available in this category 🙏 Pick one from the list','J’ai compris, mais cette question n’existe pas dans cette catégorie 🙏 Choisis dans la liste','Entendí, pero esa pregunta no está en esta categoría 🙏 Elige una de la lista','Entendi, mas essa pergunta não existe nesta categoria 🙏 Escolha uma da lista'],
+  'voice_lang': ['لغة / لهجة الميكروفون','Microphone language / dialect','Langue du micro','Idioma del micrófono','Idioma do microfone'],
+  'voice_tip': ['اضغط مطولاً على 🎤 لاختيار لهجتك','Long-press 🎤 to choose your dialect','Appui long sur 🎤 pour choisir ta langue','Mantén pulsado 🎤 para elegir tu idioma','Segure 🎤 para escolher seu idioma'],
   'search_name': ['ابحث بالاسم…','Search by name…','Chercher un nom…','Buscar por nombre…','Buscar pelo nome…'],
   'friends': ['الأصدقاء', 'Friends', 'Amis', 'Amigos', 'Amigos'],
   'my_id': ['الـ ID الخاص بك', 'Your ID', 'Ton ID', 'Tu ID', 'Seu ID'],

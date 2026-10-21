@@ -64,6 +64,10 @@ class Prefs {
   static String get friendsRaw => _getString('friends') ?? '';
   static set friendsRaw(String v) => _setString('friends', v);
 
+  /// Speech recognition language/dialect (e.g. ar-DZ, ar-EG, fr-FR); empty = follow the app language.
+  static String get voiceLang => _getString('voice_lang') ?? '';
+  static set voiceLang(String v) => _setString('voice_lang', v);
+
   static bool get soundOn => (_getInt('sound') ?? 1) == 1;
   static set soundOn(bool v) => _setInt('sound', v ? 1 : 0);
 

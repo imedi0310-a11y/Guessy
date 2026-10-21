@@ -665,7 +665,7 @@ class _OnlineGameScreenState extends State<OnlineGameScreen> {
     try {
       final text = await Voice.listen();
       if (!mounted) return;
-      final heard = (text ?? '').trim().isNotEmpty ? text!.trim() : _freeCtrl.text.trim();
+      final heard = ((text ?? '').trim().isNotEmpty ? text!.trim() : _freeCtrl.text.trim()).split('\n').first;
       if (heard.isNotEmpty) {
         _freeCtrl.text = heard;
         _sendFree();

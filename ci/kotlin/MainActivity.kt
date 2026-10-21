@@ -83,7 +83,7 @@ class MainActivity : FlutterActivity() {
         putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, l)
         putExtra("android.speech.extra.EXTRA_ADDITIONAL_LANGUAGES", arrayOf(l.substringBefore('-')))
         putExtra(RecognizerIntent.EXTRA_PROMPT, prompt)
-        putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3)
+        putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 5)
         putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
         putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, packageName)
     }
@@ -104,7 +104,8 @@ class MainActivity : FlutterActivity() {
                 if (!t.isNullOrBlank()) channel?.invokeMethod("partial", t)
             }
             override fun onResults(results: Bundle?) {
-                val t = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.firstOrNull()
+                // all alternatives, best first, one per line: the app picks the one it understands
+                val t = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)?.filter { it.isNotBlank() }?.joinToString("\n")
                 destroyRecognizer()
                 finish(t)
             }
@@ -147,7 +148,7 @@ class MainActivity : FlutterActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode != reqSpeech) return
         if (resultCode == Activity.RESULT_OK) {
-            finish(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull())
+            finish(data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.filter { it.isNotBlank() }?.joinToString("\n"))
         } else {
             finish(null)
         }

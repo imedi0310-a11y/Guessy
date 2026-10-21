@@ -74,6 +74,15 @@ void main() {
     expect(q('هل هذا اللاعب فاز بالكرة الذهبية من قبل', world), 'bdo');
     expect(q('هل يعيش هذا الحيوان في البحر', animals), 's');
     expect(q('هل هذا الحيوان يطير', animals), 'fl');
+    // dialects
+    expect(q('واش يعوم', animals), 'w');
+    expect(q('واش ياكل اللحم', animals), 'p');
+    expect(q('مايطيرش', animals), 'fl');
+    expect(q('هو بيطير', animals), 'fl');
+    expect(q('واش كيطير', animals), 'fl');
+    expect(q('واش لعب فالبارصا', world), 'barca');
+    expect(q("est-ce qu'il est brésilien", world), 'bra');
+    expect(q('does he play for barcelona', world), 'barca');
     expect(q('هل لعب في الدوري', world), isNull); // too vague: which league?
     expect(q('هل لعب في الدوري الاروبي', world), anyOf('eurl', isNull)); // never "is he European?"
     expect(q('هل هو لاعب كرة قدم من البرازيل', world), 'bra');
@@ -106,6 +115,7 @@ void main() {
     expect(q('واش هو من الأكاتسوكي', nar), 'akatsuki');
     expect(q('هل عنده شارينغان', nar), 'sharingan');
     expect(q('هل هو أشقر', nar), 'blond');
+    expect(q('واش شعرو كحل', nar), 'black');
     final pk = GameData.cat('pokemon').attrs;
     expect(q('هل هو ناري', pk), 'fire');
     expect(q('هل هو من نوع الماء', pk), 'water');

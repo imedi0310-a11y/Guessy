@@ -139,6 +139,13 @@ class GameController extends ChangeNotifier {
   /// When a typed name fits several cards (e.g. two players called Ronaldo).
   List<CardItem> candidates = const [];
 
+  /// Would [askFree] do something with this text? (no side effects)
+  bool understands(String text) {
+    final named = matchCardNames(text, cat);
+    if (lastNameScore >= 10 && named.isNotEmpty && named.length <= 6) return true;
+    return matchQuestion(text, cat.attrs) != null || (named.isNotEmpty && named.length <= 6);
+  }
+
   String? askFree(String text) {
     if (!canAct) return null;
     // A card name in the question = a guess ("is it Mbappé?"), spelling mistakes allowed

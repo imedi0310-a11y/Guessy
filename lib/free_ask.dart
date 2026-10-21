@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'data.dart';
+import 'prefs.dart';
 import 'sfx.dart';
 import 'strings.dart';
 import 'theme.dart';
@@ -39,6 +40,10 @@ class _FreeAskBarState extends State<FreeAskBar> {
       Voice.stop(); // finish now with what was heard
       return;
     }
+    if (Prefs.voiceLang.isEmpty) {
+      _snack(t('voice_tip')); // once: tell how to pick a dialect
+      Prefs.voiceLang = Voice.current;
+    }
     setState(() => _listening = true);
     Sfx.play('tap', haptic: true);
     _ctrl.clear();
@@ -47,14 +52,44 @@ class _FreeAskBarState extends State<FreeAskBar> {
       if (!mounted) return;
       final heard = (text ?? '').trim().isNotEmpty ? text!.trim() : _ctrl.text.trim();
       if (heard.isNotEmpty) {
-        _ctrl.text = heard;
-        _send();
+        // several guesses of what was said, best first: the game keeps the first one it understands
+        _ctrl.text = heard.split('\n').first;
+        _ctrl.clear();
+        FocusScope.of(context).unfocus();
+        widget.onSubmit(heard);
       }
     } catch (e) {
       if (mounted) _snack(Voice.errorText(e));
     } finally {
       if (mounted) setState(() => _listening = false);
     }
+  }
+
+  void _pickVoice() {
+    Sfx.play('tap');
+    showModalBottomSheet(
+      context: context,
+      builder: (c) => SafeArea(
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          children: [
+            Text(t('voice_lang'), textAlign: TextAlign.center, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 8),
+            for (final ch in Voice.choices)
+              ListTile(
+                title: Text(ch.$2),
+                trailing: ch.$1 == Voice.current ? const Icon(Icons.check_rounded, color: C.gold) : null,
+                onTap: () {
+                  Prefs.voiceLang = ch.$1;
+                  Navigator.pop(c);
+                  _snack('🎤 ${ch.$2}');
+                },
+              ),
+          ],
+        ),
+      ),
+    );
   }
 
   void _send() {
@@ -100,6 +135,7 @@ class _FreeAskBarState extends State<FreeAskBar> {
         child: InkWell(
           customBorder: const CircleBorder(),
           onTap: _toggle,
+          onLongPress: _pickVoice,
           child: SizedBox(width: 46, height: 46, child: Icon(_listening ? Icons.stop_rounded : Icons.mic_rounded, color: Colors.white)),
         ),
       ),
@@ -332,6 +368,16 @@ const _filler = {
   'est', 'ce', 'que', 'qu', 'il', 'elle', 'ils', 'le', 'la', 'les', 'un', 'une', 'de', 'du', 'des', 'cette', 'personne', 'joueur',
   'es', 'el', 'ella', 'los', 'las', 'una', 'esta', 'este', 'persona', 'jugador', 'eu', 'ele', 'ela', 'o', 'os', 'as', 'um', 'uma',
   'essa', 'esse', 'pessoa', 'jogador', 'ainda', 'encore', 'todavia', 'sigue', 'toujours',
+  // Darija (DZ / MA / TN), Egyptian, Levantine, Gulf
+  'شنو', 'اشنو', 'شكون', 'كاين', 'كاينه', 'ياك', 'راني', 'راك', 'راهم', 'تاع', 'تاعو', 'تاعها', 'ديال', 'ديالو', 'متاع', 'متاعو',
+  'كيفاش', 'هذاك', 'هديك', 'هاذاك', 'داك', 'ديك', 'ده', 'دي', 'دا', 'ايه', 'هيدا', 'هيدي', 'هيك', 'عم', 'كده', 'كدا',   'ماشي', 'مشي', 'مش', 'مو', 'موش', 'ليس', 'اليس', 'الا', 'لا', 'نعم', 'اه', 'ايوه', 'واه', 'سبق', 'له', 'لها', 'ان', 'أن', 'قد', 'لقد',
+  'ذات', 'يوما', 'يوم', 'مره', 'ابدا', 'خويا', 'صاحبي', 'خو', 'اسمع', 'قلي', 'بربي', 'والله', 'هيا', 'ok', 'اوكي',
+  'الكارطه', 'كارتي', 'متاعي', 'اللي', 'الي', 'لي', 'اللى', 'هذي', 'هاي', 'هادو', 'هدول', 'هذول',
+  // English / French / Spanish / Portuguese spoken fillers
+  'ever', 'like', 'kind', 'sort', 'guy', 'dude', 'someone', 'somebody', 'uh', 'please', 'tell', 'me', 'you', 'your', 'so', 'well',
+  'cest', 'c', 'quil', 'quelle', 'alors', 'bon', 'bah', 'euh', 'genre', 'mec', 'gars', 'ton', 'ta', 'ma', 'mon', 'deja', 'jamais',
+  'alguna', 'vez', 'tipo', 'eso', 'esto', 'pues', 'oye', 'tio', 'mi', 'tu', 'ya', 'nunca', 'ese',
+  'ja', 'alguma', 'cara', 'ne', 'voce', 'minha', 'meu', 'sua', 'seu', 'aquele', 'aquela',
 };
 
 /// Same meaning → same word. Values must appear (normalized) in the attribute questions.
@@ -360,6 +406,16 @@ const _syn = {
   'سبنيولي': 'اسباني', 'طليان': 'ايطالي', 'طلياني': 'ايطالي', 'برازيلي': 'برازيلي', 'يغني': 'يغني', 'مغني': 'يغني', 'مطرب': 'يغني', 'يغنى': 'يغني',
   'ممثل': 'ممثل', 'يمثل': 'ممثل', 'كوميدي': 'كوميدي', 'يضحك': 'كوميدي', 'يوتيوبر': 'يوتيوب', 'انستغرام': 'يوتيوب', 'تيك': 'يوتيوب',
   'طاير': 'طاير',
+  'كحل': 'اسود', 'كحله': 'اسود', 'كحلا': 'اسود', 'حمر': 'احمر', 'حمرا': 'احمر', 'حمره': 'احمر', 'صفر': 'اصفر', 'صفرا': 'اصفر',
+  'خضر': 'اخضر', 'خضرا': 'اخضر', 'زرق': 'ازرق', 'زرقا': 'ازرق', 'شعرو': 'شعره', 'شعرها': 'شعره', 'كورة': 'كره', 'كوره': 'كره',   'طفله': 'امراه', 'بنية': 'امراه', 'بنيه': 'امراه', 'لالة': 'امراه', 'مدام': 'امراه', 'خالتي': 'امراه',
+  'يسكن': 'يعيش', 'عايش': 'يعيش', 'يقدر': 'يستطيع', 'يجم': 'يستطيع', 'يعرف': 'يستطيع', 'يقدرش': 'يستطيع', 'يطيرو': 'يطير',
+  'لعبت': 'لعب', 'يلعب': 'لعب', 'يلعبو': 'لعب', 'بيلعب': 'لعب', 'كيلعب': 'لعب', 'joue': 'played', 'jouait': 'played', 'jugo': 'played', 'jogou': 'played', 'plays': 'played', 'play': 'played',
+  'ربح': 'فاز', 'ربحها': 'فاز', 'داها': 'فاز', 'خذا': 'فاز', 'خدا': 'فاز', 'كسب': 'فاز', 'won': 'won', 'gagne': 'won', 'gano': 'won', 'ganhou': 'won',
+  'دزاير': 'جزايري', 'الدزاير': 'جزايري', 'جزاير': 'جزايري', 'الجزاير': 'جزايري', 'المغرب': 'مغربي', 'مصر': 'مصري', 'فرنسا': 'فرنسي', 'اسبانيا': 'اسباني',
+  'البرازيل': 'برازيلي', 'برازيل': 'برازيلي', 'ارجنتين': 'ارجنتيني', 'الارجنتين': 'ارجنتيني', 'ايطاليا': 'ايطالي', 'المانيا': 'الماني', 'البرتغال': 'برتغالي',
+  'انجلترا': 'انجليزي', 'انقلترا': 'انجليزي', 'انجليز': 'انجليزي', 'اوروبا': 'اوروبي', 'افريقيا': 'افريقيا',
+  'algerie': 'algerien', 'algerienne': 'algerien', 'maroc': 'marocain', 'france': 'francais', 'espagne': 'espagnol', 'bresil': 'bresilien',
+  'goal': 'حارس', 'لقول': 'حارس', 'بلاكور': 'مهاجم', 'اتاكون': 'مهاجم', 'ديفونسور': 'مدافع', 'ميليو': 'وسط',
   'ناري': 'نار', 'مايي': 'ماء', 'عشبي': 'عشب', 'كهربايي': 'كهرباء', 'جليدي': 'جليد', 'شبحي': 'شبح', 'سام': 'سم',
   'شياطين': 'شيطان', 'عمالقه': 'عملاق', 'قراصنه': 'قرصان', 'يبيض': 'يبيض', 'بيض': 'يبيض',
 };
@@ -377,6 +433,14 @@ const _phrases = {
   'paris saint germain': 'باريس', 'paris sg': 'باريس', 'بي اس جي': 'باريس', 'باريس سان جيرمان': 'باريس',
   'man utd': 'يونايتد', 'manchester united': 'يونايتد', 'مانشستر يونايتد': 'يونايتد', 'man city': 'سيتي', 'manchester city': 'سيتي',
   'مانشستر سيتي': 'سيتي', 'real madrid': 'ريال مدريد', 'still alive': 'alive', 'تيك توك': 'يوتيوب',
+  'ياكل اللحم': 'مفترس', 'ياكل لحم': 'مفترس', 'eats meat': 'مفترس', 'mange de la viande': 'مفترس',
+  'يعوم': 'يعيش ماء', 'يعوم في الما': 'يعيش ماء', 'في الما': 'ماء', 'الما': 'ماء', 'تحت الما': 'ماء',
+  'شعرو كحل': 'شعره اسود', 'شعرو اصفر': 'شعره اشقر', 'شعرو اشقر': 'شعره اشقر', 'blond': 'اشقر',
+  'مازال حي': 'alive', 'مازال عايش': 'alive', 'باقي حي': 'alive', 'est vivant': 'alive', 'sigue vivo': 'alive', 'ainda vivo': 'alive',
+  'est mort': 'توفي', 'is dead': 'توفي', 'الله يرحمو': 'توفي', 'الله يرحمه': 'توفي',
+  'كاس العالم': 'كاس العالم', 'المونديال': 'كاس العالم', 'مونديال': 'كاس العالم', 'coupe du monde': 'world cup', 'mundial': 'world cup',
+  'ligue des champions': 'champions', 'champions league': 'champions', 'لي شومبيون': 'ابطال', 'شومبيونز': 'ابطال', 'التشامبيونز': 'ابطال',
+  'البالون دور': 'ذهبيه', 'بالون دور': 'ذهبيه',
 };
 
 /// Also drops attached بال / وال / فال / كال ("بالكرة" -> "كرة") — questions only, not names.
@@ -418,8 +482,14 @@ List<_QTok> _qTokens(String s) {
       continue;
     }
     // "ولد" means "born" in questions like "هل ولد قبل 1990" -> keep as born
-    final w = _canonWord(raw);
-    if (w.isNotEmpty) out.add(_QTok(w, false));
+    // Darija negation "ما…ش" (مايطيرش -> يطير): treated like the plain question
+    var r = raw;
+    if (r.length > 5 && r.startsWith('ما') && r.endsWith('ش')) r = r.substring(2, r.length - 1);
+    final w = _canonWord(r);
+    if (w.isEmpty) continue;
+    for (final part in w.split(' ')) {
+      if (part.isNotEmpty) out.add(_QTok(part, false));
+    }
   }
   return out;
 }
@@ -428,7 +498,7 @@ double _wMatch(String a, String b, [bool prefixTried = false]) {
   if (a == b) return 1;
   // Arabic attached prepositions: لبرشلونة / ببرشلونة = برشلونة
   if (!prefixTried) {
-    for (final p in const ['ل', 'ب']) {
+    for (final p in const ['ل', 'ب', 'ك', 'و', 'ف']) {
       if (a.length > 4 && a.startsWith(p) && _wMatch(a.substring(1), b, true) > 0) return 0.95;
       if (b.length > 4 && b.startsWith(p) && _wMatch(a, b.substring(1), true) > 0) return 0.95;
     }

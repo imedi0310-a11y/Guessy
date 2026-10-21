@@ -1,11 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'prefs.dart';
 import 'strings.dart';
 
 /// Speech-to-text: Android's recognizer inside the app (live text), or the system voice dialog.
 class Voice {
   static const _ch = MethodChannel('guessy/speech');
-  static String get _lang => const {'ar': 'ar-DZ', 'en': 'en-US', 'fr': 'fr-FR', 'es': 'es-ES', 'pt': 'pt-BR'}[Lang.code] ?? 'en-US';
+  static String get _lang =>
+      Prefs.voiceLang.isNotEmpty ? Prefs.voiceLang : (const {'ar': 'ar-DZ', 'en': 'en-US', 'fr': 'fr-FR', 'es': 'es-ES', 'pt': 'pt-BR'}[Lang.code] ?? 'en-US');
+
+  /// Voices the player can pick (long-press the mic): dialects each have their own recognizer.
+  static const choices = <(String, String)>[
+    ('ar-DZ', '🇩🇿 الدارجة الجزائرية'), ('ar-MA', '🇲🇦 الدارجة المغربية'), ('ar-TN', '🇹🇳 التونسية'), ('ar-EG', '🇪🇬 المصرية'),
+    ('ar-SA', '🇸🇦 الخليجية / الفصحى'), ('ar-LB', '🇱🇧 الشامية'), ('fr-FR', '🇫🇷 Français'), ('en-US', '🇺🇸 English'),
+    ('es-ES', '🇪🇸 Español'), ('pt-BR', '🇧🇷 Português'),
+  ];
+  static String get current => _lang;
 
   /// Live text heard so far (updates while the user talks).
   static final partial = ValueNotifier<String>('');
