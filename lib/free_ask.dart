@@ -240,7 +240,11 @@ _NameIndex _index(Cat cat) => _catCache.putIfAbsent('${cat.id}:${cat.cards.lengt
     });
 
 /// Cards whose name (in any language, or a nickname) the text refers to, best matches only.
+/// Strength of the last [matchCardNames] result: >= 10 means a full name / nickname was written exactly.
+double lastNameScore = 0;
+
 List<CardItem> matchCardNames(String text, Cat cat) {
+  lastNameScore = 0;
   final ix = _index(cat);
   // "is he FROM Naruto / One Piece?" is a question about the series, not a guess:
   // drop question words that come right after من / from / de ...
@@ -266,7 +270,9 @@ List<CardItem> matchCardNames(String text, Cat cat) {
     var cardBest = 0.0;
     for (final toks in e.value) {
       // full name written exactly → strongest
-      if (n.contains(' ${toks.join(' ')} ') || n.contains(' ال${toks.join(' ')} ')) {
+      // (a nickname made only of question words, e.g. "Real", never counts as a written name)
+      if (!toks.every(ix.questionWords.contains) &&
+          (n.contains(' ${toks.join(' ')} ') || n.contains(' ال${toks.join(' ')} '))) {
         cardBest = 10.0 + toks.length;
         break;
       }
@@ -291,6 +297,7 @@ List<CardItem> matchCardNames(String text, Cat cat) {
       out.add(e.key);
     }
   }
+  lastNameScore = best;
   return out;
 }
 

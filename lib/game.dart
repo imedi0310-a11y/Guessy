@@ -143,16 +143,22 @@ class GameController extends ChangeNotifier {
     if (!canAct) return null;
     // A card name in the question = a guess ("is it Mbappé?"), spelling mistakes allowed
     final named = matchCardNames(text, cat).where((c) => !myWrong.contains(c.id) && !removed.contains(c.id)).toList();
-    if (named.length == 1) {
+    final exactName = lastNameScore >= 10 && named.length <= 6;
+    if (exactName && named.length == 1) {
       guess(named.first);
       return 'g';
     }
-    if (named.length > 1) {
+    if (exactName) {
       candidates = named;
       return 'amb';
     }
     final m = matchQuestion(text, cat.attrs);
     if (m == null) {
+      // a name written approximately: show those cards so the player confirms (never guess by accident)
+      if (named.isNotEmpty && named.length <= 6) {
+        candidates = named;
+        return 'amb';
+      }
       // understood, but this category has no such question (e.g. "European?" in a category without it)
       for (final other in GameData.cats) {
         if (other != cat && matchQuestion(text, other.attrs) != null) return 'na';

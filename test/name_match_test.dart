@@ -77,6 +77,15 @@ void main() {
     expect(q('هل لعب في الدوري', world), isNull); // too vague: which league?
     expect(q('هل لعب في الدوري الاروبي', world), anyOf('eurl', isNull)); // never "is he European?"
     expect(q('هل هو لاعب كرة قدم من البرازيل', world), 'bra');
+    // questions typed in a 1000-player category must stay questions
+    if (GameData.cats.any((c) => c.id == 'world')) {
+      final w = GameData.cat('world');
+      for (final s in ['هل هو مهاجم أو جناح', 'هل هو حارس مرمى', 'هل لعب في الدوري الإنجليزي', 'هل هو إيطالي', 'هل فاز بالكرة الذهبية']) {
+        matchCardNames(s, w);
+        expect(lastNameScore, lessThan(10), reason: s);
+        expect(matchQuestion(s, w.attrs), isNotNull, reason: s);
+      }
+    }
 
     final anime = GameData.cat('anime');
     expect(anime.id, 'anime');
